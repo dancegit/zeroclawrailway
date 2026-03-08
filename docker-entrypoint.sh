@@ -51,13 +51,20 @@ require_approval_for_medium_risk = false
 block_high_risk_commands = ${BLOCK_HIGH_RISK}
 
 allowed_commands = [
-    "git", "gh", "npm", "node", "npx", "yarn", "pnpm",
-    "cargo", "rustc", "rustup",
-    "python3", "pip3", "pip",
+allowed_commands = [
+    "git", "gh",
+    "npm", "node", "npx", "yarn", "pnpm",
+    "cargo", "rustc", "rustup", "rustfmt",
+    "python3", "pip3", "pip", "black",
+    "curl", "wget", "http", "https",
+    "psql", "mysql", "redis-cli", "sqlite3",
+    "aws", "vault",
+    "eslint", "prettier",
+    "jq", "yq",
     "ls", "cat", "grep", "find", "echo", "pwd", "wc", "head", "tail", "date",
     "mkdir", "mv", "cp", "touch", "rm",
-    "curl", "wget",
-    "vim", "nano"
+    "vim", "nano",
+    "htop", "ps", "kill"
 ]
 
 forbidden_paths = []
