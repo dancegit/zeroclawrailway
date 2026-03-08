@@ -68,7 +68,7 @@ RUN pip install --upgrade pip && \
     pytest-asyncio \
     httpie
 
-RUN curl -sL https://github.com/microsoft/hurl/releases/download/6.0.0/hurl-6.0.0-x86_64-unknown-linux-gnu.tar.gz | tar -C /usr/local/bin -xzf - --strip-components=1 hurl-6.0.0-x86_64-unknown-linux-gnu/hurl
+RUN curl -sL https://github.com/Orange-OpenSource/hurl/releases/download/7.1.0/hurl-7.1.0-x86_64-unknown-linux-gnu.tar.gz | tar -C /usr/local/bin -xzf - --strip-components=1 hurl-7.1.0-x86_64-unknown-linux-gnu/hurl
 
 RUN apt-get update && apt-get install -y --no-install-recommends lnav && rm -rf /var/lib/apt/lists/*
 
