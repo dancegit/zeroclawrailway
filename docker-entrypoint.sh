@@ -14,6 +14,7 @@ cat > /zeroclaw-data/.zeroclaw/config.toml << EOF
 api_key = "${ZAI_API_KEY:-}"
 default_provider = "${DEFAULT_PROVIDER:-zai}"
 default_model = "${ZEROCLAW_MODEL:-glm-5}"
+default_temperature = 0.7
 
 [memory]
 backend = "sqlite"
