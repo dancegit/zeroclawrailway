@@ -7,8 +7,8 @@ export HOME=/zeroclaw-data
 mkdir -p /zeroclaw-data/.zeroclaw
 mkdir -p /zeroclaw-data/.zeroclaw/workspace
 
-# Set default allowed users if not provided
-TELEGRAM_ALLOWED_USERS="${TELEGRAM_ALLOWED_USERS:-[*]}"
+# Set default allowed users if not provided (must be valid TOML array with quoted strings)
+TELEGRAM_ALLOWED_USERS="${TELEGRAM_ALLOWED_USERS:-[\"*\"]}"
 
 cat > /zeroclaw-data/.zeroclaw/config.toml << EOF
 api_key = "${ZAI_API_KEY:-}"
