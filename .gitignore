@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build artifacts
+target/
+dist/
+build/
+*.o
+*.so
+*.exe
+*.dll
+*.dylib
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# Environment files (never commit these!)
+.env
+.env.*
+*.env
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Sensitive files (never commit!)
+secrets/
+credentials/
+*.pem
+*.key
+*_token*
+*_secret*
+
+# Railway
+.railway/
