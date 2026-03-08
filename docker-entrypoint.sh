@@ -15,8 +15,8 @@ ALLOW_PUBLIC_BIND="${ZEROCLAW_ALLOW_PUBLIC_BIND:-false}"
 # Set default allowed users if not provided (must be valid TOML array with quoted strings)
 TELEGRAM_ALLOWED_USERS="${TELEGRAM_ALLOWED_USERS:-[\"*\"]}"
 
-# Autonomy level: "read_only", "supervised", or "full"
-AUTONOMY_LEVEL="${ZEROCLAW_AUTONOMY_LEVEL:-supervised}"
+# Autonomy level: "read_only", "supervised", or "full" (default: full for max autonomy)
+AUTONOMY_LEVEL="${ZEROCLAW_AUTONOMY_LEVEL:-full}"
 
 # Whether to restrict operations to workspace directory only
 WORKSPACE_ONLY="${ZEROCLAW_WORKSPACE_ONLY:-false}"
@@ -46,7 +46,7 @@ allow_public_bind = ${ALLOW_PUBLIC_BIND}
 level = "${AUTONOMY_LEVEL}"
 workspace_only = ${WORKSPACE_ONLY}
 max_actions_per_hour = 100
-max_cost_per_day_cents = 10000
+max_cost_per_day_cents = 1000
 require_approval_for_medium_risk = false
 block_high_risk_commands = ${BLOCK_HIGH_RISK}
 
