@@ -117,6 +117,14 @@ Only configured **channels** can interact with the agent.
 | `GIT_AUTHOR_EMAIL` | Git author email |
 | `GIT_COMMITTER_NAME` | Git committer name |
 | `GIT_COMMITTER_EMAIL` | Git committer email |
+| `ZEROCLAW_GIT_REPOS` | Comma-separated list of repos to clone at startup |
+
+**ZEROCLAW_GIT_REPOS formats:**
+- `owner/repo` — Short format (expanded to GitHub URL)
+- `https://github.com/owner/repo.git` — Full URL
+- `owner/repo,another/repo` — Multiple repos
+
+Uses `GITHUB_TOKEN` or `GH_TOKEN` for authenticated cloning if available. Clones into workspace directory with `--depth 1`.
 
 ---
 

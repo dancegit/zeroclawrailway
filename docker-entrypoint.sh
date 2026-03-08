@@ -1,11 +1,58 @@
 #!/bin/sh
 set -e
 
-# Set HOME to our data directory so zeroclaw finds ~/.zeroclaw/config.toml
 export HOME=/zeroclaw-data
+WORKSPACE_DIR="/zeroclaw-data/.zeroclaw/workspace"
 
 mkdir -p /zeroclaw-data/.zeroclaw
-mkdir -p /zeroclaw-data/.zeroclaw/workspace
+mkdir -p "$WORKSPACE_DIR"
+
+clone_git_repos() {
+    [ -z "$ZEROCLAW_GIT_REPOS" ] && return 0
+    
+    AUTH_TOKEN="${GITHUB_TOKEN:-$GH_TOKEN}"
+    echo "Cloning git repos into workspace..."
+    
+    OLD_IFS="$IFS"
+    IFS=','
+    for repo in $ZEROCLAW_GIT_REPOS; do
+        repo=$(echo "$repo" | tr -d ' ')
+        [ -z "$repo" ] && continue
+        
+        case "$repo" in
+            https://*|http://*|git@*)
+                repo_url="$repo"
+                repo_name=$(echo "$repo" | sed 's/.*\///; s/\.git$//')
+                ;;
+            *)
+                repo_name=$(echo "$repo" | sed 's/.*\///')
+                if [ -n "$AUTH_TOKEN" ]; then
+                    repo_url="https://${AUTH_TOKEN}@github.com/${repo}.git"
+                else
+                    repo_url="https://github.com/${repo}.git"
+                fi
+                ;;
+        esac
+        
+        clone_dir="$WORKSPACE_DIR/$repo_name"
+        
+        if [ -d "$clone_dir" ]; then
+            echo "  ↳ $repo_name already exists, pulling latest..."
+            (cd "$clone_dir" && git pull --rebase) || echo "  ⚠️  Failed to pull $repo_name"
+        else
+            echo "  ↳ Cloning $repo_name..."
+            if git clone --depth 1 "$repo_url" "$clone_dir" 2>/dev/null; then
+                echo "  ✓ Cloned $repo_name"
+            else
+                echo "  ⚠️  Failed to clone $repo_name (may need auth token)"
+            fi
+        fi
+    done
+    IFS="$OLD_IFS"
+    echo "Git repos ready."
+}
+
+clone_git_repos
 
 # Gateway binds to localhost only - NOT exposed to internet
 # Telegram channel works independently and doesn't need public gateway
