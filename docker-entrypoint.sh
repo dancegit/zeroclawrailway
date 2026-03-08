@@ -26,6 +26,9 @@ EOF
 if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
 cat >> /zeroclaw-data/.zeroclaw/config.toml << EOF
 
+[channels_config]
+cli = true
+
 [channels_config.telegram]
 bot_token = "${TELEGRAM_BOT_TOKEN}"
 allowed_users = ${TELEGRAM_ALLOWED_USERS:-["*"]}
