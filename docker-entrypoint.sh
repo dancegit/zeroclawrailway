@@ -26,10 +26,17 @@ WORKSPACE_ONLY="${ZEROCLAW_WORKSPACE_ONLY:-false}"
 # Whether to block high-risk commands (rm -rf, etc.)
 BLOCK_HIGH_RISK="${ZEROCLAW_BLOCK_HIGH_RISK:-false}"
 
+# Provider configuration - use ZEROCLAW_* env vars which take precedence
+# These can be overridden at runtime via Railway variables
+# ZeroClaw's apply_env_overrides() will use these env vars if config.toml values are empty
+
+# Build config.toml - leave values empty to let env vars take precedence via apply_env_overrides()
 cat > /zeroclaw-data/.zeroclaw/config.toml << EOF
-api_key = "${ZAI_API_KEY:-}"
-default_provider = "${DEFAULT_PROVIDER:-zai}"
-default_model = "${ZEROCLAW_MODEL:-glm-5}"
+# Provider config - env vars (ZEROCLAW_*) take precedence via apply_env_overrides()
+# Set these in Railway: ZEROCLAW_API_KEY, ZEROCLAW_PROVIDER, ZEROCLAW_MODEL
+api_key = ""
+default_provider = ""
+default_model = ""
 default_temperature = 0.7
 
 [memory]
@@ -43,13 +50,11 @@ require_pairing = ${REQUIRE_PAIRING}
 allow_public_bind = ${ALLOW_PUBLIC_BIND}
 
 [autonomy]
-# Security policy configuration
 level = "${AUTONOMY_LEVEL}"
 workspace_only = ${WORKSPACE_ONLY}
 block_high_risk_commands = ${BLOCK_HIGH_RISK}
 max_actions_per_hour = 100
 
-# Allowlist of commands the agent can execute
 allowed_commands = [
     "git", "gh", "npm", "node", "npx", "yarn", "pnpm",
     "cargo", "rustc", "rustup",
@@ -60,8 +65,6 @@ allowed_commands = [
     "vim", "nano"
 ]
 
-# Environment variables to pass through to shell commands
-# This allows git clone with authentication via GITHUB_TOKEN
 shell_env_passthrough = [
     "GITHUB_TOKEN",
     "GIT_AUTHOR_NAME",
