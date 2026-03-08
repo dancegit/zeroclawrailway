@@ -53,19 +53,18 @@ block_high_risk_commands = ${BLOCK_HIGH_RISK}
 allowed_commands = [
     "git", "gh",
     "npm", "node", "npx", "yarn", "pnpm",
-    "cargo", "rustc", "rustup", "rustfmt", "cargo-clippy",
-    "python3", "pip3", "pip", "poetry", "uv", "black", "ruff", "pytest",
-    "curl", "wget", "http", "https", "hurl",
-    "psql", "mysql", "redis-cli", "sqlite3", "mongosh",
-    "aws", "vault",
-    "eslint", "prettier", "jest", "vitest",
-    "jq", "yq",
+    "cargo", "rustc", "rustup", "rustfmt",
     "go", "gofmt", "goimports",
+    "python3", "pip3", "pip", "poetry", "black", "ruff", "pytest",
+    "curl", "wget", "http", "https",
+    "psql", "mysql", "redis-cli", "sqlite3",
+    "aws", "vault",
+    "eslint", "prettier", "jest", "vitest", "sg",
+    "jq", "yq", "lnav",
     "ls", "cat", "grep", "find", "echo", "pwd", "wc", "head", "tail", "date",
     "mkdir", "mv", "cp", "touch", "rm",
     "vim", "nano",
-    "htop", "ps", "kill",
-    "docker", "lnav", "sg"
+    "htop", "ps", "kill"
 ]
 
 forbidden_paths = []
