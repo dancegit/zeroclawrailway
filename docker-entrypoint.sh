@@ -1,7 +1,11 @@
 #!/bin/sh
 set -e
 
+# Set HOME to our data directory so zeroclaw finds ~/.zeroclaw/config.toml
+export HOME=/zeroclaw-data
+
 mkdir -p /zeroclaw-data/.zeroclaw
+mkdir -p /zeroclaw-data/.zeroclaw/workspace
 
 cat > /zeroclaw-data/.zeroclaw/config.toml << EOF
 api_key = "${ZAI_API_KEY:-}"

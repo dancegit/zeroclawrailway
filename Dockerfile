@@ -11,6 +11,8 @@ RUN tar xzf /tmp/zeroclaw.tar.gz -C /usr/local/bin zeroclaw && \
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
+ENV HOME=/zeroclaw-data
+
 WORKDIR /zeroclaw-data
 
 EXPOSE 42617
