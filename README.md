@@ -5,6 +5,7 @@ Custom Docker image for deploying ZeroClaw on Railway with **multi-channel suppo
 ## Features
 
 - Generates config from environment variables at runtime
+- **Dynamic SOUL.md generation** from repository analysis for context-aware agents
 - Supports **all ZeroClaw providers** via environment variables
 - **Multi-channel support**: Telegram, Discord, Slack, Matrix, WhatsApp, and more
 - **Secure by default**: Gateway bound to localhost only, NOT exposed to internet
@@ -125,6 +126,34 @@ Only configured **channels** can interact with the agent.
 - `owner/repo,another/repo` — Multiple repos
 
 Uses `GITHUB_TOKEN` or `GH_TOKEN` for authenticated cloning if available. Clones into workspace directory with `--depth 1`.
+
+### SOUL.md/AGENTS.md Generation
+
+Dynamic agent context generation from repository analysis. These files provide task-specific context to agents at spawn time.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ZEROCLAW_SOUL_GENERATE_DYNAMIC` | Generate SOUL.md from repo analysis | `false` |
+| `ZEROCLAW_SOUL_DESCRIPTION_INPUT` | Base soul description template | - |
+| `ZEROCLAW_SOUL_ANALYZE_DEPTH` | Max directory depth for analysis | `2` |
+| `ZEROCLAW_SOUL_MAX_SIZE_KB` | Max SOUL.md size before truncation | `50` |
+| `ZEROCLAW_AGENTS_GENERATE_DYNAMIC` | Generate AGENTS.md with role definitions | `false` |
+| `ZEROCLAW_AGENTS_DESCRIPTION_INPUT` | Base agent description template | - |
+
+**What gets generated in SOUL.md:**
+- Repository structure overview (top-level files by type)
+- Technology stack detection (Rust, Node.js, Python, Go, Docker, etc.)
+- README summary (first 30 lines)
+- Operating context (workspace path, autonomy level, git config)
+- Agent instructions for task execution workflow
+
+**Example configuration:**
+```bash
+ZEROCLAW_SOUL_GENERATE_DYNAMIC=true
+ZEROCLAW_SOUL_DESCRIPTION_INPUT="You are an expert full-stack developer working on a SaaS application."
+ZEROCLAW_SOUL_ANALYZE_DEPTH=3
+ZEROCLAW_GIT_REPOS=owner/repo
+```
 
 ---
 
