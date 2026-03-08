@@ -6,26 +6,16 @@ FROM ubuntu:24.04
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    git \
+    gh \
+    nodejs \
+    cargo \
+    vim \
+    neovim \
+    htop \
+    bun \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
-
-# ============================================================================
-# INSTALL NIX PACKAGE MANAGER
-# ============================================================================
-# Install Nix using the official installer script
-RUN curl -L https://nixos.org/nix/install | sh -s -- --daemon -- --no-daemonise -- --yes
-
-# Add Nix to PATH
-ENV PATH="/root/.nix-profile/bin:/nix/var/nix/profiles/default/bin:${PATH}"
-
-# ============================================================================
-# INSTALL PACKAGES VIA NIX
-# ============================================================================
-# Install development tools for the agent to use
-# Packages: git, gh (GitHub CLI), nodejs, cargo (Rust), vim, neovim, htop, bun, fastfetch
-RUN /root/.nix-profile/bin/nix-env -i nixpkgs.git gh nodejs cargo vim neovim htop bun fastfetch -A nixpkgs --run \
-    && nix-collect-garbage -d \
-    && rm -rf /root/.cache
 
 # Verify installations
 RUN git --version && gh --version && node --version && cargo --version

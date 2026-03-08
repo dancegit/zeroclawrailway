@@ -34,7 +34,7 @@ Override these with environment variables:
 
 ## Included Packages
 
-The image includes these tools (installed via Nix):
+The image includes these tools (installed via apt-get):
 - `git` - Version control
 - `gh` - GitHub CLI
 - `nodejs` - Node.js runtime
@@ -42,7 +42,6 @@ The image includes these tools (installed via Nix):
 - `vim` / `neovim` - Text editors
 - `htop` - System monitor
 - `bun` - JavaScript runtime
-- `fastfetch` - System information
 
 ## Usage
 
