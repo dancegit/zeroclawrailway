@@ -51,7 +51,6 @@ require_approval_for_medium_risk = false
 block_high_risk_commands = ${BLOCK_HIGH_RISK}
 
 allowed_commands = [
-allowed_commands = [
     "git", "gh",
     "npm", "node", "npx", "yarn", "pnpm",
     "cargo", "rustc", "rustup", "rustfmt",
