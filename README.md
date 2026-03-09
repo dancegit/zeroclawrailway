@@ -41,7 +41,7 @@ Only configured **channels** can interact with the agent.
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `ZEROCLAW_PROVIDER` | Provider name | `opencode`, `openrouter`, `openai`, `anthropic`, `zai`, `ollama` |
+| `ZEROCLAW_PROVIDER` | Provider name | `opencode-go`, `openrouter`, `openai`, `anthropic`, `zai`, `ollama` |
 | `ZEROCLAW_MODEL` | Model name | `opencode-go/glm-5`, `openrouter/auto`, `gpt-4o`, `claude-sonnet-4` |
 | `ZEROCLAW_MODEL_PROVIDER` | Alternative provider setting | `openrouter` |
 
