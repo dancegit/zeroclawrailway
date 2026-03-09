@@ -55,3 +55,4 @@ railway.toml
 *.railway.*
 railway-*.json
 railway-*.toml
+__pycache__/
