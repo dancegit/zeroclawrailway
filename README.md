@@ -236,6 +236,7 @@ ZeroClaw supports various integrations for productivity and information gatherin
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ZEROCLAW_REASONING_ENABLED` | Enable reasoning mode | - |
+| `ZEROCLAW_MAX_TOOL_ITERATIONS` | Maximum tool iterations before stopping | `200` |
 | `ZEROCLAW_UBUNTU_INSTALL_EXTRA_PACKAGES` | Comma-separated list of extra Ubuntu packages to install at startup | - |
 
 **ZEROCLAW_UBUNTU_INSTALL_EXTRA_PACKAGES examples:**

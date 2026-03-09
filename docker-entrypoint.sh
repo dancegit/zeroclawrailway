@@ -635,6 +635,9 @@ WORKSPACE_ONLY="${ZEROCLAW_WORKSPACE_ONLY:-false}"
 # Whether to block high-risk commands (rm -rf, etc.)
 BLOCK_HIGH_RISK="${ZEROCLAW_BLOCK_HIGH_RISK:-false}"
 
+# Maximum tool iterations before stopping (default: 200)
+MAX_TOOL_ITERATIONS="${ZEROCLAW_MAX_TOOL_ITERATIONS:-200}"
+
 # Build config.toml - leave values empty to let env vars take precedence via apply_env_overrides()
 cat > "$ZERCLAW_DIR/config.toml" << EOF
 # Provider config - env vars (ZEROCLAW_*) take precedence via apply_env_overrides()
@@ -658,6 +661,7 @@ level = "${AUTONOMY_LEVEL}"
 workspace_only = ${WORKSPACE_ONLY}
 max_actions_per_hour = 100
 max_cost_per_day_cents = 1000
+max_tool_iterations = ${MAX_TOOL_ITERATIONS}
 require_approval_for_medium_risk = false
 block_high_risk_commands = ${BLOCK_HIGH_RISK}
 
