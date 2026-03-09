@@ -41,9 +41,21 @@ Only configured **channels** can interact with the agent.
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `ZEROCLAW_PROVIDER` | Provider name | `opencode-go`, `openrouter`, `openai`, `anthropic`, `zai`, `ollama` |
-| `ZEROCLAW_MODEL` | Model name | `opencode-go/glm-5`, `openrouter/auto`, `gpt-4o`, `claude-sonnet-4` |
+| `ZEROCLAW_PROVIDER` | Provider name or custom endpoint | `custom:https://api.example.com/v1`, `openrouter`, `openai`, `anthropic`, `zai`, `ollama` |
+| `ZEROCLAW_MODEL` | Model name | `glm-5`, `openrouter/auto`, `gpt-4o`, `claude-sonnet-4` |
 | `ZEROCLAW_MODEL_PROVIDER` | Alternative provider setting | `openrouter` |
+
+**Custom OpenAI-Compatible Endpoints:**
+
+Use `custom:https://your-api.com/v1` format for OpenAI-compatible APIs:
+
+```
+ZEROCLAW_PROVIDER=custom:https://opencode.ai/zen/go/v1
+ZEROCLAW_MODEL=glm-5
+ZEROCLAW_API_KEY=your-api-key
+```
+
+**Note:** Setting `ZEROCLAW_PROVIDER=openai` with `OPENAI_BASE_URL` does NOT work - ZeroClaw ignores the base URL. Use `custom:https://...` instead.
 
 ### Provider-Specific API Keys
 
