@@ -944,7 +944,8 @@ shell_env_passthrough = [
     "GMAIL_CLIENT_ID",
     "GMAIL_CLIENT_SECRET",
     "GMAIL_REFRESH_TOKEN",
-    "OBSIDIAN_VAULT_PATH"
+    "OBSIDIAN_VAULT_PATH",
+    "OPENCODE_API_KEY"
 ]
 
 allowed_roots = []

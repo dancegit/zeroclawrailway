@@ -41,14 +41,15 @@ Only configured **channels** can interact with the agent.
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `ZEROCLAW_PROVIDER` | Provider name | `openrouter`, `openai`, `anthropic`, `zai`, `ollama` |
-| `ZEROCLAW_MODEL` | Model name | `openrouter/auto`, `gpt-4o`, `claude-sonnet-4` |
+| `ZEROCLAW_PROVIDER` | Provider name | `opencode`, `openrouter`, `openai`, `anthropic`, `zai`, `ollama` |
+| `ZEROCLAW_MODEL` | Model name | `opencode-go/glm-5`, `openrouter/auto`, `gpt-4o`, `claude-sonnet-4` |
 | `ZEROCLAW_MODEL_PROVIDER` | Alternative provider setting | `openrouter` |
 
 ### Provider-Specific API Keys
 
 | Variable | Provider |
 |----------|----------|
+| `OPENCODE_API_KEY` | OpenCode (opencode-go) |
 | `ZAI_API_KEY` | Z.AI |
 | `OPENAI_API_KEY` | OpenAI |
 | `ANTHROPIC_API_KEY` | Anthropic |
