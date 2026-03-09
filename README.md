@@ -114,12 +114,20 @@ ZeroClaw supports various integrations for productivity and information gatherin
 
 **Get your token:** [Todoist Settings → Integrations → API Token](https://todoist.com/app/settings/integrations)
 
-**Features:**
-- Task synchronization and management
-- Daily briefing generation
-- Project and label queries
+**CLI Commands:**
+```bash
+todoist-cli list              # List all tasks
+todoist-cli list --today      # Today's tasks
+todoist-cli list --overdue    # Overdue tasks
+todoist-cli add "Buy groceries" --due "tomorrow"
+todoist-cli add "Meeting" --project Work --priority 4
+todoist-cli complete TASK_ID
+todoist-cli projects          # List projects
+todoist-cli today             # Today's tasks
+todoist-cli briefing          # Daily briefing
+```
 
-#### Gmail/Email Integration
+#### Gmail/Google Calendar Integration
 
 | Variable | Description | Required |
 |----------|-------------|----------|
@@ -127,14 +135,46 @@ ZeroClaw supports various integrations for productivity and information gatherin
 | `GMAIL_CLIENT_SECRET` | Google OAuth2 client secret | Yes |
 | `GMAIL_REFRESH_TOKEN` | OAuth2 refresh token | Yes |
 
-**Setup instructions:**
-1. Create OAuth2 credentials in [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-2. Enable Gmail API in your project
-3. Generate refresh token using OAuth2 flow
+**Setup Instructions:**
 
-**Features:**
-- Email filtering and search
-- Calendar event sync
+1. **Create Google OAuth2 Credentials:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+   - Create a new project or select existing
+   - Click "Create Credentials" → "OAuth client ID"
+   - Select "Desktop app" as application type
+   - Copy Client ID and Client Secret
+
+2. **Enable APIs:**
+   - Enable Gmail API: `https://console.cloud.google.com/apis/library/gmail.googleapis.com`
+   - Enable Calendar API: `https://console.cloud.google.com/apis/library/calendar-json.googleapis.com`
+
+3. **Generate Refresh Token:**
+   
+   Run the helper script locally (not in container):
+   ```bash
+   python3 scripts/google-oauth-helper.py \
+     --client-id "YOUR_CLIENT_ID" \
+     --client-secret "YOUR_CLIENT_SECRET" \
+     --scopes all
+   ```
+   
+   Visit the URL shown, authorize the app, and paste the code.
+   The script outputs the `GMAIL_REFRESH_TOKEN`.
+
+4. **Set in Railway:**
+   ```bash
+   railway variable set GMAIL_CLIENT_ID=xxx
+   railway variable set GMAIL_CLIENT_SECRET=xxx
+   railway variable set GMAIL_REFRESH_TOKEN=xxx
+   ```
+
+**Validate Token:**
+```bash
+google-oauth-helper --validate \
+  --client-id "xxx" \
+  --client-secret "xxx" \
+  --refresh-token "xxx"
+```
 - Label management
 
 #### IMAP/POP3 Email Support
@@ -160,12 +200,26 @@ ZeroClaw supports various integrations for productivity and information gatherin
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `OBSIDIAN_VAULT_PATH` | Path to Obsidian vault | `$WORKSPACE/obsidian-vault` |
-| `OBSIDIAN_SYNC_ENABLED` | Enable vault sync | `false` |
+
+**CLI Commands:**
+```bash
+obsidian-helper list                    # List all notes
+obsidian-helper list --tag project      # Notes by tag
+obsidian-helper search "keyword"        # Search notes
+obsidian-helper search "regex" --regex  # Regex search
+obsidian-helper create "Notes/Meeting" --title "Meeting Notes"
+obsidian-helper append "Notes/Meeting" "Follow up with John"
+obsidian-helper daily                   # Create/append daily note
+obsidian-helper tags                    # List all tags
+obsidian-helper read "Notes/Meeting"    # Read note content
+```
 
 **Features:**
-- Note-taking capabilities
-- Markdown file management
-- Vault synchronization
+- Markdown note management
+- Frontmatter parsing and creation
+- Daily notes support
+- Tag-based organization
+- Full-text search
 
 #### News Aggregation
 
@@ -483,7 +537,11 @@ The agent can execute these commands:
 | **File Ops** | `mkdir`, `mv`, `cp`, `touch`, `rm` |
 | **Editors** | `vim`, `nano` |
 | **Process Management** | `htop`, `ps`, `kill` |
-| **Integrations** | `todoist`, `gmail-cli`, `obsidian`, `news`, `imap`, `feedparser`, `kokoro-tts`, `modal` |
+| **Todoist** | `todoist-cli` (list, add, complete, today, briefing) |
+| **Obsidian** | `obsidian-helper` (search, list, create, daily, tags) |
+| **Google OAuth** | `google-oauth-helper` (generate, validate) |
+| **TTS** | `kokoro-tts` |
+| **GPU** | `modal` |
 
 ---
 

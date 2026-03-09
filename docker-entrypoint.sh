@@ -85,6 +85,81 @@ setup_kokoro_tts
 setup_modal
 
 # =============================================================================
+# Todoist Integration
+# =============================================================================
+
+setup_todoist() {
+    [ -z "$TODOIST_API_TOKEN" ] && return 0
+    
+    echo "Setting up Todoist integration..."
+    
+    if /opt/venv/bin/python3 -c "from todoist_api_python.api import TodoistAPI; api = TodoistAPI('$TODOIST_API_TOKEN'); api.get_projects()" >/dev/null 2>&1; then
+        echo "  API token validated"
+        echo "  Use: todoist-cli list|add|complete|today|briefing"
+    else
+        echo "  Invalid Todoist API token"
+    fi
+}
+
+# =============================================================================
+# Gmail/Google OAuth2 Integration
+# =============================================================================
+
+setup_gmail_oauth() {
+    [ -z "$GMAIL_CLIENT_ID" ] && [ -z "$GMAIL_CLIENT_SECRET" ] && return 0
+    
+    echo "Setting up Gmail/Google OAuth2..."
+    
+    GMAIL_CREDENTIALS_DIR="${WORKSPACE_DIR}/.google-credentials"
+    mkdir -p "$GMAIL_CREDENTIALS_DIR"
+    
+    if [ -n "$GMAIL_CLIENT_ID" ] && [ -n "$GMAIL_CLIENT_SECRET" ] && [ -n "$GMAIL_REFRESH_TOKEN" ]; then
+        cat > "$GMAIL_CREDENTIALS_DIR/credentials.json" << GMAIL_CREDS
+{
+  "client_id": "$GMAIL_CLIENT_ID",
+  "client_secret": "$GMAIL_CLIENT_SECRET",
+  "refresh_token": "$GMAIL_REFRESH_TOKEN",
+  "token_uri": "https://oauth2.googleapis.com/token"
+}
+GMAIL_CREDS
+        chmod 600 "$GMAIL_CREDENTIALS_DIR/credentials.json"
+        echo "  Credentials file created"
+        echo "  Use: google-oauth-helper --validate to verify"
+    else
+        echo "  Partial credentials provided"
+        echo "  Need: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN"
+        echo "  Run: google-oauth-helper to generate tokens"
+    fi
+}
+
+# =============================================================================
+# Obsidian Vault Integration
+# =============================================================================
+
+setup_obsidian() {
+    OBSIDIAN_VAULT="${OBSIDIAN_VAULT_PATH:-$WORKSPACE_DIR/obsidian-vault}"
+    
+    mkdir -p "$OBSIDIAN_VAULT"
+    
+    [ ! -d "$OBSIDIAN_VAULT" ] && return 0
+    
+    if [ "$(ls -A $OBSIDIAN_VAULT 2>/dev/null)" ]; then
+        note_count=$(find "$OBSIDIAN_VAULT" -name "*.md" 2>/dev/null | wc -l)
+        echo "Obsidian vault configured ($note_count notes)"
+    else
+        echo "Obsidian vault initialized (empty)"
+        mkdir -p "$OBSIDIAN_VAULT/Daily Notes"
+        mkdir -p "$OBSIDIAN_VAULT/Attachments"
+    fi
+    
+    export OBSIDIAN_VAULT_PATH="$OBSIDIAN_VAULT"
+}
+
+setup_todoist
+setup_gmail_oauth
+setup_obsidian
+
+# =============================================================================
 # Git Repository Cloning
 # =============================================================================
 
@@ -412,6 +487,30 @@ SOUL_HEADER
         IFS="$OLD_IFS"
     fi
 
+    # Add integration capabilities section
+    INTEGRATIONS=""
+    [ -n "$TODOIST_API_TOKEN" ] && INTEGRATIONS="$INTEGRATIONS- **Todoist**: Task management via \`todoist-cli\`\n"
+    [ -n "$GMAIL_REFRESH_TOKEN" ] && INTEGRATIONS="$INTEGRATIONS- **Gmail**: Email access via Google API\n"
+    [ -d "$OBSIDIAN_VAULT_PATH" ] || [ -d "$WORKSPACE_DIR/obsidian-vault" ] && INTEGRATIONS="$INTEGRATIONS- **Obsidian**: Note management via \`obsidian-helper\`\n"
+    [ "${ZEROCLAW_KOKORO_ENABLED:-false}" = "true" ] && INTEGRATIONS="$INTEGRATIONS- **TTS**: Text-to-speech via \`kokoro-tts\`\n"
+    [ "${ZEROCLAW_MODAL_ENABLED:-false}" = "true" ] && INTEGRATIONS="$INTEGRATIONS- **Modal GPU**: Serverless GPU acceleration\n"
+    [ -n "$RSS_FEEDS" ] && INTEGRATIONS="$INTEGRATIONS- **News/RSS**: Feed aggregation available\n"
+    
+    if [ -n "$INTEGRATIONS" ]; then
+        cat >> "$soul_file" << INTEGRATIONS_SECTION
+
+## Integration Capabilities
+
+$(printf "%s" "$INTEGRATIONS")
+
+**CLI Tools Available:**
+- \`todoist-cli list|add|complete|today|briefing\` - Task management
+- \`obsidian-helper search|list|create|daily\` - Note operations
+- \`google-oauth-helper\` - OAuth token management
+- \`kokoro-tts\` - Text-to-speech synthesis
+INTEGRATIONS_SECTION
+    fi
+
     # Add operating context
     cat >> "$soul_file" << SOUL_FOOTER
 
@@ -429,6 +528,7 @@ When working on tasks:
 3. Run appropriate tests before marking work complete
 4. Commit changes with descriptive messages
 5. Report progress via task comments
+6. Use available integrations (Todoist, Obsidian, Gmail) when relevant
 
 ---
 *This file is regenerated on container restart. Manual changes will be lost.*
@@ -488,6 +588,17 @@ AGENTS_HEADER
 | Code Reviewer | `code-reviewer` | Code quality, best practices |
 | UX Manager | `ux-manager` | User experience, interface design |
 
+## Personal Assistant Agents
+
+| Role | ID | Focus |
+|------|-----|-------|
+| Task Manager | `task-manager` | Todoist integration, task prioritization |
+| Email Assistant | `email-assistant` | Gmail/IMAP, email triage, drafting |
+| Note Keeper | `note-keeper` | Obsidian vault, knowledge management |
+| News Curator | `news-curator` | RSS feeds, news summarization |
+| Daily Briefing | `daily-briefing` | Morning summaries, agenda planning |
+| Calendar Manager | `calendar-manager` | Google Calendar, scheduling |
+
 ## Development Specialists
 
 | Role | ID | Focus |
@@ -521,7 +632,56 @@ Example: `ux-designer` → `ux-manager` → `main`
 
 ---
 
-## Role-Specific System Prompts
+## Personal Assistant System Prompts
+
+### Task Manager (`task-manager`)
+```
+You are a task management specialist integrated with Todoist.
+Help users organize, prioritize, and track tasks efficiently.
+Suggest task breakdowns and time estimates.
+Generate daily briefings from task lists.
+Use todoist-cli commands to manage tasks programmatically.
+```
+
+### Email Assistant (`email-assistant`)
+```
+You are an email management assistant with Gmail/IMAP access.
+Help users triage, summarize, and draft emails.
+Identify urgent messages and action items.
+Draft professional email responses.
+Maintain inbox zero principles when organizing.
+```
+
+### Note Keeper (`note-keeper`)
+```
+You are a knowledge management assistant for Obsidian vaults.
+Help users capture, organize, and retrieve notes.
+Maintain consistent frontmatter and tagging.
+Create connections between related notes.
+Generate daily and weekly summaries from notes.
+```
+
+### News Curator (`news-curator`)
+```
+You are a news aggregation and summarization assistant.
+Monitor RSS feeds and news sources.
+Filter and prioritize news by relevance.
+Generate concise news summaries.
+Identify trending topics and key developments.
+```
+
+### Daily Briefing (`daily-briefing`)
+```
+You are a daily briefing generator combining multiple sources.
+Aggregate tasks from Todoist, emails, calendar events, and news.
+Create prioritized morning briefings.
+Highlight urgent items and deadlines.
+Suggest daily focus areas based on workload.
+```
+
+---
+
+## Core Development Agent Prompts
 
 ### Main Agent (`main`)
 ```
@@ -680,12 +840,9 @@ allowed_commands = [
     "mkdir", "mv", "cp", "touch", "rm",
     "vim", "nano",
     "htop", "ps", "kill",
-    "todoist",
-    "gmail-cli",
-    "obsidian",
-    "news",
-    "imap",
-    "feedparser",
+    "todoist-cli",
+    "google-oauth-helper",
+    "obsidian-helper",
     "kokoro-tts",
     "modal"
 ]
@@ -701,7 +858,12 @@ shell_env_passthrough = [
     "GH_TOKEN",
     "MODAL_TOKEN_ID",
     "MODAL_TOKEN_SECRET",
-    "KOKORO_MODEL_PATH"
+    "KOKORO_MODEL_PATH",
+    "TODOIST_API_TOKEN",
+    "GMAIL_CLIENT_ID",
+    "GMAIL_CLIENT_SECRET",
+    "GMAIL_REFRESH_TOKEN",
+    "OBSIDIAN_VAULT_PATH"
 ]
 
 allowed_roots = []

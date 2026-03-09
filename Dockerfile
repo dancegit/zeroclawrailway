@@ -44,6 +44,11 @@ ADD https://github.com/zeroclaw-labs/zeroclaw/releases/download/v0.1.7/zeroclaw-
 RUN tar xzf /tmp/zeroclaw.tar.gz -C /usr/local/bin zeroclaw && rm /tmp/zeroclaw.tar.gz && chmod +x /usr/local/bin/zeroclaw
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY scripts/ /usr/local/bin/zeroclaw-scripts/
+RUN chmod +x /usr/local/bin/zeroclaw-scripts/*.py && \
+    ln -s /usr/local/bin/zeroclaw-scripts/todoist-cli.py /usr/local/bin/todoist-cli && \
+    ln -s /usr/local/bin/zeroclaw-scripts/google-oauth-helper.py /usr/local/bin/google-oauth-helper && \
+    ln -s /usr/local/bin/zeroclaw-scripts/obsidian-helper.py /usr/local/bin/obsidian-helper
 ENV HOME=/zeroclaw-data
 WORKDIR /zeroclaw-data
 EXPOSE 42617
