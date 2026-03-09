@@ -291,6 +291,8 @@ obsidian-helper read "Notes/Meeting"    # Read note content
 |----------|-------------|---------|
 | `ZEROCLAW_REASONING_ENABLED` | Enable reasoning mode | - |
 | `ZEROCLAW_MAX_TOOL_ITERATIONS` | Maximum tool iterations before stopping | `200` |
+| `ZEROCLAW_COMPACT_CONTEXT` | Context compaction (false for large models like glm-5) | `false` |
+| `ZEROCLAW_MAX_HISTORY_MESSAGES` | Maximum history messages to retain | `200` |
 | `ZEROCLAW_UBUNTU_INSTALL_EXTRA_PACKAGES` | Comma-separated list of extra Ubuntu packages to install at startup | - |
 
 **ZEROCLAW_UBUNTU_INSTALL_EXTRA_PACKAGES examples:**
