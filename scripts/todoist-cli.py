@@ -1,24 +1,9 @@
 #!/usr/bin/env python3
-"""
-Todoist CLI Wrapper
-
-Simple command-line interface for Todoist operations.
-Uses the todoist-api-python library.
-
-Commands:
-    list        List tasks (optionally filter by project)
-    add         Add a new task
-    complete    Complete a task by ID
-    projects    List all projects
-    labels      List all labels
-    today       Show tasks due today
-"""
-
 import argparse
 import json
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 
 try:
     from todoist_api_python.api import TodoistAPI
@@ -36,10 +21,23 @@ def get_api():
     return TodoistAPI(token)
 
 
+def get_all_tasks(api):
+    """Get all tasks handling pagination (iterator of lists)."""
+    all_tasks = []
+    try:
+        tasks_iter = api.get_tasks()
+        for task_list in tasks_iter:
+            all_tasks.extend(task_list)
+        return all_tasks
+    except Exception as e:
+        print(f"Error fetching tasks: {e}")
+        return []
+
+
 def cmd_list(args):
     api = get_api()
     try:
-        tasks = api.get_tasks()
+        tasks = get_all_tasks(api)
         
         if args.project:
             projects = api.get_projects()
@@ -141,7 +139,7 @@ def cmd_labels(args):
 def cmd_today(args):
     api = get_api()
     try:
-        tasks = api.get_tasks()
+        tasks = get_all_tasks(api)
         today = datetime.now().strftime('%Y-%m-%d')
         today_tasks = [t for t in tasks if t.due and t.due.date == today]
         
@@ -170,7 +168,7 @@ def cmd_today(args):
 def cmd_briefing(args):
     api = get_api()
     try:
-        tasks = api.get_tasks()
+        tasks = get_all_tasks(api)
         projects = api.get_projects()
         project_map = {p.id: p.name for p in projects}
         
@@ -208,14 +206,12 @@ def main():
     parser = argparse.ArgumentParser(description='Todoist CLI')
     subparsers = parser.add_subparsers(dest='command', required=True)
     
-    # list
     p_list = subparsers.add_parser('list', help='List tasks')
     p_list.add_argument('--project', '-p', help='Filter by project name')
     p_list.add_argument('--overdue', '-o', action='store_true', help='Show only overdue')
     p_list.add_argument('--json', '-j', action='store_true', help='JSON output')
     p_list.set_defaults(func=cmd_list)
     
-    # add
     p_add = subparsers.add_parser('add', help='Add a task')
     p_add.add_argument('content', help='Task content')
     p_add.add_argument('--due', '-d', help='Due date (natural language)')
@@ -224,25 +220,20 @@ def main():
     p_add.add_argument('--labels', '-l', help='Comma-separated labels')
     p_add.set_defaults(func=cmd_add)
     
-    # complete
     p_complete = subparsers.add_parser('complete', help='Complete a task')
     p_complete.add_argument('task_id', help='Task ID')
     p_complete.set_defaults(func=cmd_complete)
     
-    # projects
     p_projects = subparsers.add_parser('projects', help='List projects')
     p_projects.set_defaults(func=cmd_projects)
     
-    # labels
     p_labels = subparsers.add_parser('labels', help='List labels')
     p_labels.set_defaults(func=cmd_labels)
     
-    # today
     p_today = subparsers.add_parser('today', help="Show today's tasks")
     p_today.add_argument('--json', '-j', action='store_true', help='JSON output')
     p_today.set_defaults(func=cmd_today)
     
-    # briefing
     p_briefing = subparsers.add_parser('briefing', help='Daily briefing')
     p_briefing.set_defaults(func=cmd_briefing)
     

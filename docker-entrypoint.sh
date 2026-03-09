@@ -885,12 +885,14 @@ host = "127.0.0.1"
 require_pairing = ${REQUIRE_PAIRING}
 allow_public_bind = ${ALLOW_PUBLIC_BIND}
 
+[agent]
+max_tool_iterations = ${MAX_TOOL_ITERATIONS}
+
 [autonomy]
 level = "${AUTONOMY_LEVEL}"
 workspace_only = ${WORKSPACE_ONLY}
 max_actions_per_hour = 100
 max_cost_per_day_cents = 1000
-max_tool_iterations = ${MAX_TOOL_ITERATIONS}
 require_approval_for_medium_risk = false
 block_high_risk_commands = ${BLOCK_HIGH_RISK}
 
