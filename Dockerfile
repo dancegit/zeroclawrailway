@@ -45,10 +45,10 @@ RUN mkdir -p /etc/nix && \
     echo "sandbox = false" >> /etc/nix/nix.conf && \
     mkdir -m 0755 /nix && \
     curl -L https://nixos.org/nix/install | sh -s -- --no-daemon --yes && \
-    . /root/.nix-profile/etc/profile.d/nix.sh && \
-    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager && \
-    nix-channel --update && \
-    nix-shell '<home-manager>' -A install && \
+    export PATH="/root/.nix-profile/bin:/nix/var/nix/profiles/default/bin:$PATH" && \
+    /root/.nix-profile/bin/nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager && \
+    /root/.nix-profile/bin/nix-channel --update && \
+    /root/.nix-profile/bin/nix-shell '<home-manager>' -A install && \
     echo "Nix and home-manager installed"
 ENV PATH="/root/.nix-profile/bin:/nix/var/nix/profiles/default/bin:${PATH}"
 ADD https://github.com/zeroclaw-labs/zeroclaw/releases/download/v0.1.7/zeroclaw-x86_64-unknown-linux-gnu.tar.gz /tmp/zeroclaw.tar.gz
