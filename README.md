@@ -768,7 +768,7 @@ ZeroClaw Railway services need to persist customizations across deployments. Thi
 
 - **Schedules, RSS feeds, preferences lost on redeployment** - Each new deployment starts fresh
 - **Railway service IDs change** - Cannot rely on platform-specific IDs
-- **Service names are stable** - `your-service-name` remains the same
+- **Service names are stable** - `my-service-name` remains the same
 - **Multi-platform support needed** - Railway, Fly.io, Render, etc.
 
 ### Solution: External State Store
@@ -779,7 +779,7 @@ ZeroClaw Railway services need to persist customizations across deployments. Thi
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  Service Identity: service_name + owner + platform              │
-│  Key: "railway:your-org:your-service-name"            │
+│  Key: "railway:your-org:your-service-name"                      │
 │                                                                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐           │
 │  │   NeonDB     │  │   Redis      │  │   Git Repo   │           │
@@ -795,9 +795,7 @@ ZeroClaw Railway services need to persist customizations across deployments. Thi
             ┌───────────────┼───────────────┐
             │               │               │
      ┌──────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
-     │ zeroclaw-   │ │ zeroclaw_   │ │ zeroclaw-   │
-     │ personal    │ │ general_    │ │ railway-    │
-     │ assistant   │ │ dev_bot     │ │ improver    │
+     │  service-1  │ │  service-2  │ │  service-3  │
      └─────────────┘ └─────────────┘ └─────────────┘
 ```
 
@@ -817,13 +815,13 @@ Services are identified by a composite key that remains stable across deployment
 
 ```bash
 # Identity components (set via environment variables)
-ZEROCLAW_SERVICE_NAME=your-service-name  # Service name
-ZEROCLAW_SERVICE_OWNER=your-org                     # Owner/org
-ZEROCLAW_PLATFORM=railway                           # Deployment platform
+ZEROCLAW_SERVICE_NAME=my-service       # Your service name
+ZEROCLAW_SERVICE_OWNER=my-org          # Your org/username
+ZEROCLAW_PLATFORM=railway              # Deployment platform
 
 # Composite state key
 STATE_KEY="${ZEROCLAW_PLATFORM}:${ZEROCLAW_SERVICE_OWNER}:${ZEROCLAW_SERVICE_NAME}"
-# Example: "railway:your-org:your-service-name"
+# Example: "railway:my-org:my-service"
 ```
 
 ### Database Schema (NeonDB)
@@ -919,11 +917,11 @@ The state manager is implemented as a Python module in `scripts/state_manager.py
 
 from state_manager import StateManager
 
-# Initialize
+# Initialize with environment variables
 state = StateManager(
-    service_name="your-service-name",
-    owner="your-org",
-    platform="railway"
+    service_name=os.environ.get("ZEROCLAW_SERVICE_NAME", "default-service"),
+    owner=os.environ.get("ZEROCLAW_SERVICE_OWNER", "default-owner"),
+    platform=os.environ.get("ZEROCLAW_PLATFORM", "railway")
 )
 
 # Save a schedule

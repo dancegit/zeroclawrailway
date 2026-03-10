@@ -13,7 +13,7 @@ RUN curl -sL https://go.dev/dl/go1.23.4.linux-amd64.tar.gz | tar -C /usr/local -
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile default
 RUN curl -sL https://github.com/ast-grep/ast-grep/releases/latest/download/app-x86_64-unknown-linux-gnu.zip -o /tmp/sg.zip && \
     unzip /tmp/sg.zip -d /tmp/sg && mv /tmp/sg/sg /usr/local/bin/sg && chmod +x /usr/local/bin/sg && rm -rf /tmp/sg /tmp/sg.zip
-RUN npm install -g eslint prettier typescript ts-node pnpm yarn jest vitest
+RUN npm install -g eslint prettier typescript ts-node pnpm yarn jest vitest @railway/cli
 RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install black ruff mypy requests poetry pytest pytest-asyncio httpie \
     todoist-api-python \
