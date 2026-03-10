@@ -379,8 +379,8 @@ setup_nix_home_manager() {
         if git clone --depth 1 "$REPO_URL" "$NIX_DIR" 2>/dev/null; then
             echo "  ✓ Cloned nix-home repo"
         else
-            echo "  ⚠️  Failed to clone nix-home repo"
-            return 1
+            echo "  ⚠️  Failed to clone nix-home repo (continuing without nix config)"
+            return 0
         fi
     fi
     
@@ -1157,7 +1157,7 @@ copy_skills_to_workspace() {
 # =============================================================================
 
 clone_git_repos
-setup_nix_home_manager
+setup_nix_home_manager || true
 copy_skills_to_workspace
 generate_soul_md
 generate_agents_md
