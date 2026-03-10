@@ -50,6 +50,14 @@ jobs:
             type=ref,event=branch
             type=sha,prefix=
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+          labels: |
+            org.opencontainers.image.created=${{ steps.meta.outputs.labels }}
+            org.opencontainers.image.description=Custom ZeroClaw Docker image for Railway deployment with multi-channel support
+            org.opencontainers.image.licenses=
+            org.opencontainers.image.revision=${{ steps.meta.outputs.revision }}
+            org.opencontainers.image.source=${{ steps.meta.outputs.source }}
+            org.opencontainers.image.title=zeroclawrailway
+            org.opencontainers.image.url=https://github.com/zeroclaw777/zeroclawrailway
 
       - name: Build and push
         uses: docker/build-push-action@v5
