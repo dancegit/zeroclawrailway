@@ -530,6 +530,19 @@ When working on tasks:
 5. Report progress via task comments
 6. Use available integrations (Todoist, Obsidian, Gmail) when relevant
 
+## Skills Reference
+
+Detailed skill documentation is available in \`$WORKSPACE_DIR/.zeroclaw/skills/\`:
+
+- **kokoro-tts.md** - Text-to-speech synthesis, voice options, sending audio via Telegram
+- **telegram-attachments.md** - How to send files/images/audio via Telegram (ALWAYS use absolute paths)
+- **todoist-cli.md** - Task management commands and workflows
+
+**Critical for TTS/Audio tasks:**
+- Generate audio: \`echo "text" | kokoro-tts --voice af_sarah - /zeroclaw-data/.zeroclaw/workspace/tts-output/output.wav\`
+- Send attachment: Use ABSOLUTE path like \`/zeroclaw-data/.zeroclaw/workspace/tts-output/output.wav\`
+- Relative paths will NOT work for attachments
+
 ---
 *This file is regenerated on container restart. Manual changes will be lost.*
 SOUL_FOOTER
@@ -840,10 +853,26 @@ AGENT_ROLES
 }
 
 # =============================================================================
+# Copy Skills to Workspace
+# =============================================================================
+
+copy_skills_to_workspace() {
+    local skills_src="/zeroclaw-skills"
+    local skills_dest="$WORKSPACE_DIR/.zeroclaw/skills"
+    
+    if [ -d "$skills_src" ]; then
+        mkdir -p "$skills_dest"
+        cp -r "$skills_src"/* "$skills_dest/" 2>/dev/null || true
+        echo "  ✓ Copied skills to workspace"
+    fi
+}
+
+# =============================================================================
 # Main Execution
 # =============================================================================
 
 clone_git_repos
+copy_skills_to_workspace
 generate_soul_md
 generate_agents_md
 

@@ -45,6 +45,7 @@ RUN tar xzf /tmp/zeroclaw.tar.gz -C /usr/local/bin zeroclaw && rm /tmp/zeroclaw.
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 COPY scripts/ /usr/local/bin/zeroclaw-scripts/
+COPY skills/ /zeroclaw-skills/
 RUN chmod +x /usr/local/bin/zeroclaw-scripts/*.py && \
     ln -s /usr/local/bin/zeroclaw-scripts/todoist-cli.py /usr/local/bin/todoist-cli && \
     ln -s /usr/local/bin/zeroclaw-scripts/google-oauth-helper.py /usr/local/bin/google-oauth-helper && \
