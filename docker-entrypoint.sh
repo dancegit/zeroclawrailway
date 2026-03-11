@@ -1296,6 +1296,28 @@ fi
 
 chmod 600 "$ZERCLAW_DIR/config.toml"
 
+restore_state() {
+    [ "${ZEROCLAW_STATE_STORE_ENABLED:-false}" != "true" ] && return 0
+    
+    echo "Restoring state from persistent store..."
+    
+    SCHEDULES_FILE="$WORKSPACE_DIR/.schedules.json"
+    
+    if /opt/venv/bin/python3 /usr/local/bin/zeroclaw-scripts/state_manager.py --restore > "$SCHEDULES_FILE" 2>&1; then
+        SCHEDULE_COUNT=$(jq 'length' "$SCHEDULES_FILE" 2>/dev/null || echo "0")
+        if [ "$SCHEDULE_COUNT" -gt 0 ]; then
+            echo "  ✓ Restored $SCHEDULE_COUNT schedules from database"
+            echo "  Schedules file: $SCHEDULES_FILE"
+        else
+            echo "  No schedules to restore"
+        fi
+    else
+        echo "  ⚠️  State restore failed (continuing without schedules)"
+    fi
+}
+
+restore_state
+
 echo "=== ZeroClaw Ready ==="
 echo "  Workspace: $WORKSPACE_DIR"
 echo "  Config:    $ZERCLAW_DIR/config.toml"
