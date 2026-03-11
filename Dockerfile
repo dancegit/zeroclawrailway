@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     netcat-openbsd dnsutils httpie gh \
     postgresql-client mysql-client redis-tools sqlite3 \
     python3 python3-pip python3-venv nodejs npm build-essential jq yq \
-    espeak-ng \
+    espeak-ng libportaudio2 portaudio19-dev \
     && rm -rf /var/lib/apt/lists/*
 ENV PATH="/usr/local/go/bin:/root/.cargo/bin:/root/.local/bin:/opt/venv/bin:${PATH}"
 RUN curl -sL https://go.dev/dl/go1.23.4.linux-amd64.tar.gz | tar -C /usr/local -xzf -
