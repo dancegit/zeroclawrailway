@@ -259,7 +259,7 @@ obsidian-helper read "Notes/Meeting"    # Read note content
 | `ZEROCLAW_KOKORO_VOICE` | Default voice | `am_adam` |
 | `ZEROCLAW_KOKORO_SPEED` | Speech speed (0.5-2.0) | `1.0` |
 | `ZEROCLAW_KOKORO_LANG` | Language code | `en-us` |
-| `ZEROCLAW_KOKORO_TIMEOUT` | TTS generation timeout (seconds) | `120` |
+| `ZEROCLAW_KOKORO_TIMEOUT` | TTS generation timeout (seconds) | `1200` |
 | `ZEROCLAW_KOKORO_MODEL_DIR` | Model files directory | `$WORKSPACE/.kokoro-models` |
 | `ZEROCLAW_KOKORO_OUTPUT_DIR` | Output directory for audio | `$WORKSPACE/tts-output` |
 

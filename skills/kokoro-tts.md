@@ -14,7 +14,7 @@ Text-to-speech synthesis for generating audio files from text.
 | `ZEROCLAW_KOKORO_ENABLED` | `false` | Enable Kokoro TTS |
 | `ZEROCLAW_KOKORO_VOICE` | `af_sarah` | Default voice |
 | `ZEROCLAW_KOKORO_SPEED` | `1.0` | Speech speed (0.5-2.0) |
-| `ZEROCLAW_KOKORO_TIMEOUT` | `60` | Timeout in seconds (increase for long texts) |
+| `ZEROCLAW_KOKORO_TIMEOUT` | `1200` | Timeout in seconds (increase for long texts) |
 | `ZEROCLAW_KOKORO_OUTPUT_DIR` | `$WORKSPACE/tts-output` | Output directory |
 | `ZEROCLAW_KOKORO_MODEL_DIR` | `$WORKSPACE/.kokoro-models` | Model files directory |
 
@@ -52,7 +52,7 @@ kokoro-tts --voice am_adam --speed 1.0 input.txt output.wav
 
 For long scripts, the TTS may timeout and fall back to gTTS (which uses a female voice). To prevent this:
 
-1. Set `ZEROCLAW_KOKORO_TIMEOUT=120` or higher
+1. Set `ZEROCLAW_KOKORO_TIMEOUT=1200` or higher
 2. Or use Modal GPU for faster processing
 
 ## Troubleshooting
