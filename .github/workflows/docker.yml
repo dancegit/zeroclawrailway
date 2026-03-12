@@ -8,6 +8,8 @@ on:
       - 'docker-entrypoint.sh'
       - 'scripts/**'
       - 'skills/**'
+      - 'README.md'
+      - 'skills/**'
       - '.github/workflows/docker.yml'
   pull_request:
     branches: [main]
