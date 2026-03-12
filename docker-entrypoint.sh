@@ -51,20 +51,22 @@ setup_kokoro_tts() {
     
     KOKORO_MODEL_DIR="${ZEROCLAW_KOKORO_MODEL_DIR:-$WORKSPACE_DIR/.kokoro-models}"
     KOKORO_OUTPUT_DIR="${ZEROCLAW_KOKORO_OUTPUT_DIR:-$WORKSPACE_DIR/tts-output}"
+    KOKORO_TIMEOUT="${ZEROCLAW_KOKORO_TIMEOUT:-60}"
     mkdir -p "$KOKORO_MODEL_DIR" "$KOKORO_OUTPUT_DIR"
     
     if [ ! -f "$KOKORO_MODEL_DIR/kokoro-v1.0.onnx" ]; then
         echo "  Downloading Kokoro model files (first run)..."
         (
             cd "$KOKORO_MODEL_DIR"
-            echo "test" | /opt/venv/bin/kokoro-tts --voice "${ZEROCLAW_KOKORO_VOICE:-af_sarah}" - /dev/null 2>/dev/null || true
+            echo "test" | timeout $KOKORO_TIMEOUT /opt/venv/bin/kokoro-tts --voice "${ZEROCLAW_KOKORO_VOICE:-am_adam}" - /dev/null 2>/dev/null || true
         )
         echo "  Model files ready"
     fi
     
     export KOKORO_MODEL_PATH="$KOKORO_MODEL_DIR"
-    echo "  Voice: ${ZEROCLAW_KOKORO_VOICE:-af_sarah}"
+    echo "  Voice: ${ZEROCLAW_KOKORO_VOICE:-am_adam}"
     echo "  Output: $KOKORO_OUTPUT_DIR"
+    echo "  Timeout: ${KOKORO_TIMEOUT}s"
     echo "  Kokoro TTS configured"
 }
 

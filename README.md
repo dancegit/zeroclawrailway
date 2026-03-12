@@ -256,26 +256,44 @@ obsidian-helper read "Notes/Meeting"    # Read note content
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ZEROCLAW_KOKORO_ENABLED` | Enable Kokoro TTS integration | `false` |
-| `ZEROCLAW_KOKORO_VOICE` | Default voice | `af_sarah` |
+| `ZEROCLAW_KOKORO_VOICE` | Default voice | `am_adam` |
 | `ZEROCLAW_KOKORO_SPEED` | Speech speed (0.5-2.0) | `1.0` |
 | `ZEROCLAW_KOKORO_LANG` | Language code | `en-us` |
+| `ZEROCLAW_KOKORO_TIMEOUT` | TTS generation timeout (seconds) | `120` |
+| `ZEROCLAW_KOKORO_MODEL_DIR` | Model files directory | `$WORKSPACE/.kokoro-models` |
 | `ZEROCLAW_KOKORO_OUTPUT_DIR` | Output directory for audio | `$WORKSPACE/tts-output` |
 
 **Available Voices:**
-- `af_sarah` — Female, American English
-- `am_adam` — Male, American English
-- `bf_emma` — Female, British English
+- `am_adam` — Male, American English (recommended default)
 - `bm_george` — Male, British English
-
+- `af_sarah` — Female, American English
 - `af_nicole` — Female, American English
-
 - `af_sky` — Female, American English
+- `bf_emma` — Female, British English
 
 **Features:**
 - Convert text to speech from TXT, EPUB, PDF files
 - stdin support for piping text
 - No API keys required — runs locally on CPU
 - Model files (~50MB) downloaded on first use
+
+**Timeout Configuration:**
+
+For long texts, increase the timeout to prevent falling back to gTTS:
+```bash
+ZEROCLAW_KOKORO_TIMEOUT=120
+```
+
+If Kokoro TTS times out the the system falls back to gTTS (Google TTS) which uses a female voice. Increase the timeout to ensure the configured male voice is used. You: **Set `ZEROCLAW_KOKORO_TIMEOUT` on all zeroclaw services:
+```bash
+railway variable set ZEROCLAW_KOKORO_TIMEOUT=120 --service zeroclaw-personal-assistant
+railway variable set ZEROCLAW_KOKORO_TIMEOUT=120 --service zeroclawrailway-improver
+railway variable set ZEROCLAW_KOKORO_TIMEOUT=120 --service zeroclaw_general_dev_bot
+```
+
+**GPU Acceleration with Modal:**
+
+For faster TTS generation (especially for long texts), use Modal GPU acceleration:
 
 #### Modal.com GPU Acceleration (Optional)
 
