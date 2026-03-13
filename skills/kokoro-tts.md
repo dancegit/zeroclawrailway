@@ -83,7 +83,7 @@ When `MODAL_TTS_ENDPOINT` is set, use it for faster GPU-accelerated TTS:
 
 curl -X POST "$MODAL_TTS_ENDPOINT" \
   -H "Content-Type: application/json" \
-  -d '{"text": "Hello, this is a GPU-accelerated test.", "voice": "am_adam"}' \
+  -d '{"text": "Hello, this is a GPU-accelerated test.", "voice": "am_adam", "password": "'"$MODAL_TTS_PASSWORD"'"}' \
   -o /tmp/response.json
 
 # Extract base64 audio and decode
@@ -99,6 +99,8 @@ python3 -c "import json,base64; d=json.load(open('/tmp/response.json')); open('/
 |----------|-------------|---------|
 | `ZEROCLAW_MODAL_TTS_ENDPOINT` | Modal TTS endpoint URL | `https://xxx.modal.run` |
 | `MODAL_TTS_ENDPOINT` | Exported from `ZEROCLAW_MODAL_TTS_ENDPOINT` | - |
+| `ZEROCLAW_MODAL_TTS_PASSWORD` | Password for TTS endpoint | `your-secure-password` |
+| `MODAL_TTS_PASSWORD` | Exported from `ZEROCLAW_MODAL_TTS_PASSWORD` | - |
 
 ### Endpoint Request Format
 
@@ -107,7 +109,8 @@ python3 -c "import json,base64; d=json.load(open('/tmp/response.json')); open('/
   "text": "Your text here",
   "voice": "am_adam",
   "speed": 1.0,
-  "lang": "en-us"
+  "lang": "en-us",
+  "password": "YOUR_TTS_PASSWORD"
 }
 ```
 
@@ -133,7 +136,7 @@ modal-tts() {
     
     curl -s -X POST "$MODAL_TTS_ENDPOINT" \
       -H "Content-Type: application/json" \
-      -d "{\"text\": \"$text\", \"voice\": \"$voice\", \"speed\": $speed}" \
+      -d "{\"text\": \"$text\", \"voice\": \"$voice\", \"speed\": $speed, \"password\": \"$MODAL_TTS_PASSWORD\"}" \
       -o "$tmp"
     
     python3 -c "import json,base64; d=json.load(open('$tmp')); open('$output','wb').write(base64.b64decode(d['audio_base64']))"
