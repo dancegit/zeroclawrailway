@@ -1261,7 +1261,8 @@ allowed_commands = [
     "google-oauth-helper",
     "obsidian-helper",
     "kokoro-tts",
-    "modal"
+    "modal",
+    "run", "zeroclaw", "railway"
 ]
 
 forbidden_paths = []
