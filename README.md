@@ -297,17 +297,19 @@ For faster TTS generation (especially for long texts), use Modal GPU acceleratio
 
 #### Modal.com GPU Acceleration (Optional)
 
+Deploy a GPU-accelerated TTS endpoint on Modal for faster audio generation.
+
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `ZEROCLAW_MODAL_ENABLED` | Enable Modal GPU acceleration | Yes |
+| `ZEROCLAW_MODAL_TTS_ENDPOINT` | Modal TTS endpoint URL | Yes (after deploying) |
 | `ZEROCLAW_MODAL_TOKEN_ID` | Modal token ID (or `MODAL_TOKEN_ID`) | Yes |
 | `ZEROCLAW_MODAL_TOKEN_SECRET` | Modal token secret (or `MODAL_TOKEN_SECRET`) | Yes |
-| `ZEROCLAW_MODAL_GPU_TYPE` | GPU type: `a10g`, `a100`, `h100` | No (default: `a10g`) |
 
 **Setup:**
 1. Create account at [modal.com](https://modal.com)
-2. Generate tokens: `modal token new`
-3. Set environment variables in Railway
+2. Deploy the TTS service: [github.com/dancegit/modal-kokoro-tts](https://github.com/dancegit/modal-kokoro-tts)
+3. Copy the endpoint URL after deployment
+4. Set `ZEROCLAW_MODAL_TTS_ENDPOINT` in Railway
 
 **When to use Modal:**
 - Large text-to-speech jobs (>10k characters)
