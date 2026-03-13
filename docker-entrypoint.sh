@@ -58,7 +58,10 @@ setup_kokoro_tts() {
         echo "  Downloading Kokoro model files (first run)..."
         (
             cd "$KOKORO_MODEL_DIR"
-            echo "test" | timeout $KOKORO_TIMEOUT /opt/venv/bin/kokoro-tts --voice "${ZEROCLAW_KOKORO_VOICE:-am_adam}" - /dev/null 2>/dev/null || true
+            # kokoro-tts requires file input, not stdin
+            echo "test" > /tmp/kokoro-init.txt
+            timeout $KOKORO_TIMEOUT /opt/venv/bin/kokoro-tts --voice "${ZEROCLAW_KOKORO_VOICE:-am_adam}" /tmp/kokoro-init.txt /dev/null 2>/dev/null || true
+            rm -f /tmp/kokoro-init.txt
         )
         echo "  Model files ready"
     fi
