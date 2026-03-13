@@ -70,6 +70,12 @@ setup_kokoro_tts() {
     echo "  Voice: ${ZEROCLAW_KOKORO_VOICE:-am_adam}"
     echo "  Output: $KOKORO_OUTPUT_DIR"
     echo "  Timeout: ${KOKORO_TIMEOUT}s"
+    
+    if [ -n "$ZEROCLAW_MODAL_TTS_ENDPOINT" ]; then
+        export MODAL_TTS_ENDPOINT="$ZEROCLAW_MODAL_TTS_ENDPOINT"
+        echo "  Modal TTS endpoint: $MODAL_TTS_ENDPOINT"
+    fi
+    
     echo "  Kokoro TTS configured"
 }
 
@@ -1269,6 +1275,7 @@ shell_env_passthrough = [
     "GH_TOKEN",
     "MODAL_TOKEN_ID",
     "MODAL_TOKEN_SECRET",
+    "MODAL_TTS_ENDPOINT",
     "KOKORO_MODEL_PATH",
     "TODOIST_API_TOKEN",
     "GMAIL_CLIENT_ID",

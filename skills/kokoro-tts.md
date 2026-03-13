@@ -73,17 +73,76 @@ kokoro-tts --voice am_adam /path/to/long.txt --split-output /zeroclaw-data/.zero
 
 ## Modal GPU Acceleration
 
-**Note**: Modal is configured but kokoro-tts CLI does NOT automatically use it. GPU acceleration requires a custom Modal wrapper app.
+**GPU-accelerated TTS via Modal endpoint is now available!**
 
-Current setup:
-- `ZEROCLAW_MODAL_ENABLED=true` - Modal credentials are set
-- `ZEROCLAW_MODAL_GPU_TYPE=a10g` - GPU type configured
-- Kokoro runs on CPU by default (slower for long texts)
+When `MODAL_TTS_ENDPOINT` is set, use it for faster GPU-accelerated TTS:
 
-For GPU acceleration, you would need to:
-1. Create a Modal app that wraps kokoro-tts
-2. Deploy it as an endpoint
-3. Call the endpoint instead of local kokoro-tts
+```bash
+# Use Modal GPU endpoint (much faster for long texts)
+# MODAL_TTS_ENDPOINT is set from ZEROCLAW_MODAL_TTS_ENDPOINT env var
+
+curl -X POST "$MODAL_TTS_ENDPOINT" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Hello, this is a GPU-accelerated test.", "voice": "am_adam"}' \
+  -o /tmp/response.json
+
+# Extract base64 audio and decode
+python3 -c "import json,base64; d=json.load(open('/tmp/response.json')); open('/zeroclaw-data/.zeroclaw/workspace/tts-output/modal_audio.wav','wb').write(base64.b64decode(d['audio_base64']))"
+
+# Send via Telegram
+# Use attachment: /zeroclaw-data/.zeroclaw/workspace/tts-output/modal_audio.wav
+```
+
+### Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `ZEROCLAW_MODAL_TTS_ENDPOINT` | Modal TTS endpoint URL | `https://xxx.modal.run` |
+| `MODAL_TTS_ENDPOINT` | Exported from `ZEROCLAW_MODAL_TTS_ENDPOINT` | - |
+
+### Endpoint Request Format
+
+```json
+{
+  "text": "Your text here",
+  "voice": "am_adam",
+  "speed": 1.0,
+  "lang": "en-us"
+}
+```
+
+### Endpoint Response Format
+
+```json
+{
+  "audio_base64": "...",
+  "sample_rate": 24000,
+  "format": "wav"
+}
+```
+
+### Helper Script for Modal TTS
+
+```bash
+modal-tts() {
+    local text="$1"
+    local output="$2"
+    local voice="${3:-am_adam}"
+    local speed="${4:-1.0}"
+    local tmp="/tmp/modal-response-$$.json"
+    
+    curl -s -X POST "$MODAL_TTS_ENDPOINT" \
+      -H "Content-Type: application/json" \
+      -d "{\"text\": \"$text\", \"voice\": \"$voice\", \"speed\": $speed}" \
+      -o "$tmp"
+    
+    python3 -c "import json,base64; d=json.load(open('$tmp')); open('$output','wb').write(base64.b64decode(d['audio_base64']))"
+    rm -f "$tmp"
+}
+
+# Usage:
+# modal-tts "Hello from GPU" /zeroclaw-data/.zeroclaw/workspace/tts-output/gpu_audio.wav am_adam 1.0
+```
 
 ## Sending Audio via Telegram
 
