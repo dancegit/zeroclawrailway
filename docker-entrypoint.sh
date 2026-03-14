@@ -1237,7 +1237,7 @@ max_history_messages = ${MAX_HISTORY_MESSAGES}
 [autonomy]
 level = "${AUTONOMY_LEVEL}"
 workspace_only = ${WORKSPACE_ONLY}
-max_actions_per_hour = 100
+max_actions_per_hour = 1000
 max_cost_per_day_cents = 1000
 require_approval_for_medium_risk = false
 block_high_risk_commands = ${BLOCK_HIGH_RISK}

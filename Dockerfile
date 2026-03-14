@@ -26,7 +26,8 @@ RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --upgrade pip && \
     lxml html5lib \
     kokoro-tts \
     modal \
-    psycopg2-binary
+    psycopg2-binary \
+    fpdf
 RUN apt-get update && apt-get install -y --no-install-recommends lnav && rm -rf /var/lib/apt/lists/*
 RUN curl -sL https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -o /tmp/awscli.zip && \
     unzip /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/aws /tmp/awscli.zip
