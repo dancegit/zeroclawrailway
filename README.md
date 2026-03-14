@@ -448,7 +448,7 @@ ZeroClaw supports **multiple communication channels**. Configure them via enviro
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather | Yes |
-| `TELEGRAM_ALLOWED_USERS` | JSON array of allowed users/IDs | No (default: `["*"]`) |
+| `TELEGRAM_ALLOWED_USERS` | JSON array of allowed users/IDs | Yes (default: `[]` = no one) |
 
 **Example config.toml:**
 ```toml
@@ -457,7 +457,7 @@ cli = true
 
 [channels_config.telegram]
 bot_token = "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-allowed_users = ["*"]  # Or specific usernames/IDs
+allowed_users = ["your_username"]  # Required: set to specific usernames/IDs
 stream_mode = "partial"
 mention_only = false
 ```
@@ -475,7 +475,7 @@ mention_only = false
 [channels_config.discord]
 bot_token = "your-discord-bot-token"
 guild_id = "123456789012345678"
-allowed_users = ["*"]
+allowed_users = ["your_discord_id"]
 mention_only = false
 listen_to_bots = false
 ```
@@ -494,7 +494,7 @@ listen_to_bots = false
 bot_token = "xoxb-your-bot-token"
 app_token = "xapp-your-app-token"
 channel_id = "C1234567890"
-allowed_users = ["*"]
+allowed_users = ["U1234567890"]
 ```
 
 ### Matrix Configuration

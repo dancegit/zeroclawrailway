@@ -1189,7 +1189,8 @@ REQUIRE_PAIRING="${ZEROCLAW_REQUIRE_PAIRING:-true}"
 ALLOW_PUBLIC_BIND="${ZEROCLAW_ALLOW_PUBLIC_BIND:-false}"
 
 # Set default allowed users if not provided (must be valid TOML array with quoted strings)
-TELEGRAM_ALLOWED_USERS="${TELEGRAM_ALLOWED_USERS:-[\"*\"]}"
+# Secure by default: empty array = no one allowed until explicitly configured
+TELEGRAM_ALLOWED_USERS="${TELEGRAM_ALLOWED_USERS:-[]}"
 
 # Autonomy level: "read_only", "supervised", or "full" (default: full for max autonomy)
 AUTONOMY_LEVEL="${ZEROCLAW_AUTONOMY_LEVEL:-full}"
