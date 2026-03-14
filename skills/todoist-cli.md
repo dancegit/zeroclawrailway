@@ -68,6 +68,36 @@ todoist-cli complete 123456789
 todoist-cli complete 123456789 987654321
 ```
 
+### Move Tasks
+
+```bash
+# Move task to different project
+todoist-cli move <task_id> --project "Work"
+
+# Move multiple tasks
+todoist-cli move <task_id1> <task_id2> --project "Personal"
+```
+
+### Update Tasks
+
+```bash
+# Update task content
+todoist-cli update <task_id> --content "New task description"
+
+# Update due date
+todoist-cli update <task_id> --due "tomorrow"
+todoist-cli update <task_id> --due "2024-12-25"
+
+# Update priority (1-4, 4=highest)
+todoist-cli update <task_id> --priority 4
+
+# Update labels
+todoist-cli update <task_id> --labels "urgent,work"
+
+# Update multiple properties
+todoist-cli update <task_id> --content "Updated task" --due "next monday" --priority 3
+```
+
 ### Projects
 
 ```bash
@@ -213,6 +243,10 @@ todoist-cli today | kokoro-tts --voice af_sarah - /zeroclaw-data/.zeroclaw/works
 | `todoist-cli add "Task" --due "tomorrow"` | Add with due date |
 | `todoist-cli add "Task" --project "Work"` | Add to project |
 | `todoist-cli complete ID` | Complete task |
+| `todoist-cli move ID --project "Work"` | Move task to project |
+| `todoist-cli update ID --content "New"` | Update task content |
+| `todoist-cli update ID --due "tomorrow"` | Update due date |
+| `todoist-cli update ID --priority 4` | Update priority |
 | `todoist-cli projects` | List projects |
 | `todoist-cli briefing` | Daily briefing |
 | `todoist-cli archive ID` | Archive task |
