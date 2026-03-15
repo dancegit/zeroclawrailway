@@ -125,13 +125,13 @@ flashcard review
 ### Quick Capture
 
 ```bash
-flashcard create "New concept I learned" "The explanation"
+flashcard create "New concept I learned" --answer "The explanation"
 ```
 
 ### Bulk Add
 
 ```bash
-flashcard create "Q1" "A1" && flashcard create "Q2" "A2"
+flashcard create "Q1" --answer "A1" && flashcard create "Q2" --answer "A2"
 ```
 
 ### Study Specific Topic
@@ -147,7 +147,7 @@ Front: Question
 Back: Answer
 
 ```bash
-flashcard create "Question?" "Answer"
+flashcard create "Question?" --answer "Answer"
 ```
 
 ### inlinedAnswers (Cloze)
@@ -180,7 +180,7 @@ Verify `MEMCODE_API_KEY` is correct in environment variables.
 | `flashcard auth` | Get JWT token |
 | `flashcard list` | List all flashcards |
 | `flashcard list --course ID` | List cards in course |
-| `flashcard create Q A` | Create Q&A card |
+| `flashcard create Q --answer A` | Create Q&A card |
 | `flashcard create TEXT --cloze` | Create cloze card |
 | `flashcard delete ID` | Delete flashcard |
 | `flashcard courses` | List courses |
