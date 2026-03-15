@@ -805,6 +805,7 @@ SOUL_HEADER
     [ "${ZEROCLAW_KOKORO_ENABLED:-false}" = "true" ] && INTEGRATIONS="$INTEGRATIONS- **TTS**: Text-to-speech via \`kokoro-tts\`\n"
     [ "${ZEROCLAW_MODAL_ENABLED:-false}" = "true" ] && INTEGRATIONS="$INTEGRATIONS- **Modal GPU**: Serverless GPU acceleration\n"
     [ -n "$RSS_FEEDS" ] && INTEGRATIONS="$INTEGRATIONS- **News/RSS**: Feed aggregation available\n"
+    [ -n "$MEMCODE_API_URL" ] && [ -n "$MEMCODE_API_KEY" ] && INTEGRATIONS="$INTEGRATIONS- **Flashcards**: Spaced repetition via \`flashcard\` CLI (Memcode)\n"
     
     if [ -n "$INTEGRATIONS" ]; then
         cat >> "$soul_file" << INTEGRATIONS_SECTION
@@ -814,10 +815,11 @@ SOUL_HEADER
 $(printf "%s" "$INTEGRATIONS")
 
 **CLI Tools Available:**
-- \`todoist-cli list|add|complete|today|briefing\` - Task management
-- \`obsidian-helper search|list|create|daily\` - Note operations
-- \`google-oauth-helper\` - OAuth token management
-- \`kokoro-tts\` - Text-to-speech synthesis
+- `todoist-cli list|add|complete|today|briefing` - Task management
+- `obsidian-helper search|list|create|daily` - Note operations
+- `google-oauth-helper` - OAuth token management
+- `kokoro-tts` - Text-to-speech synthesis
+- `flashcard health|list|create|courses|study` - Spaced repetition flashcards (Memcode)
 INTEGRATIONS_SECTION
     fi
 
@@ -847,6 +849,15 @@ Detailed skill documentation is available in \`$WORKSPACE_DIR/.zeroclaw/skills/\
 - **kokoro-tts.md** - Text-to-speech synthesis, voice options, sending audio via Telegram
 - **telegram-attachments.md** - How to send files/images/audio via Telegram (ALWAYS use absolute paths)
 - **todoist-cli.md** - Task management commands and workflows
+- **flashcard.md** - Spaced repetition flashcards via Memcode API
+
+**Flashcard CLI Quick Reference:**
+- `flashcard health` - Check API connection
+- `flashcard list` - List all flashcards
+- `flashcard create "Question?" "Answer"` - Create Q&A card
+- `flashcard create "{{cloze}} text" --cloze` - Create cloze deletion card
+- `flashcard courses` - List courses
+- `flashcard course create "My Deck"` - Create new course
 
 **Critical for TTS/Audio tasks:**
 - Generate audio: \`echo "text" | kokoro-tts --voice af_sarah - /zeroclaw-data/.zeroclaw/workspace/tts-output/output.wav\`
