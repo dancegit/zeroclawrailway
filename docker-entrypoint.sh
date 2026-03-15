@@ -854,7 +854,7 @@ Detailed skill documentation is available in \`$WORKSPACE_DIR/.zeroclaw/skills/\
 **Flashcard CLI Quick Reference:**
 - `flashcard health` - Check API connection
 - `flashcard list` - List all flashcards
-- `flashcard create "Question?" "Answer"` - Create Q&A card
+- `flashcard create "Question?" --answer "Answer"` - Create Q&A card
 - `flashcard create "{{cloze}} text" --cloze` - Create cloze deletion card
 - `flashcard courses` - List courses
 - `flashcard course create "My Deck"` - Create new course

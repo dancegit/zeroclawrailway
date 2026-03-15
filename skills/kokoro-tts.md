@@ -1,6 +1,6 @@
 # Kokoro TTS Skill
 
-Text-to-speech synthesis for generating audio files from text.
+Text-to-speech synthesis for generating audio files from text. Supports single voice and multi-voice conversations.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Text-to-speech synthesis for generating audio files from text.
 | `ZEROCLAW_KOKORO_ENABLED` | `false` | Enable Kokoro TTS |
 | `ZEROCLAW_KOKORO_VOICE` | `am_adam` | Default voice |
 | `ZEROCLAW_KOKORO_SPEED` | `1.0` | Speech speed (0.5-2.0) |
-| `ZEROCLAW_KOKORO_TIMEOUT` | `1200` | Timeout in seconds (increase for long texts) |
+| `ZEROCLAW_KOKORO_TIMEOUT` | `1200` | Timeout in seconds |
 | `ZEROCLAW_KOKORO_OUTPUT_DIR` | `$WORKSPACE/tts-output` | Output directory |
 | `ZEROCLAW_KOKORO_MODEL_DIR` | `$WORKSPACE/.kokoro-models` | Model files directory |
 
@@ -24,35 +24,36 @@ Text-to-speech synthesis for generating audio files from text.
 | Voice | Description |
 |-------|-------------|
 | `am_adam` | Male, American English (recommended default) |
+| `am_echo` | Male, American English |
+| `am_eric` | Male, American English |
 | `bm_george` | Male, British English |
+| `bm_fable` | Male, British English |
+| `bm_lewis` | Male, British English |
 | `af_sarah` | Female, American English |
 | `af_nicole` | Female, American English |
 | `af_sky` | Female, American English |
 | `bf_emma` | Female, British English |
+| `bf_alice` | Female, British English |
+| `bf_lily` | Female, British English |
 
 ## Output Directory
 
 Audio files are saved to: `$WORKSPACE/tts-output/` (default)
 Override with: `ZEROCLAW_KOKORO_OUTPUT_DIR`
 
+---
+
 ## Usage
 
-### Basic: Text string to audio file
+### Single Voice: Text to Audio
 
 ```bash
-# Write text to temp file, then convert
 echo "Hello, this is a test message." > /tmp/input.txt
 kokoro-tts --voice am_adam /tmp/input.txt /zeroclaw-data/.zeroclaw/workspace/tts-output/output.wav
 rm /tmp/input.txt
 ```
 
-### File to audio
-
-```bash
-kokoro-tts --voice am_adam --speed 1.0 /path/to/input.txt /zeroclaw-data/.zeroclaw/workspace/tts-output/output.wav
-```
-
-### Adjust speed (0.5 - 2.0)
+### Adjust Speed (0.5 - 2.0)
 
 ```bash
 echo "Slow down a bit" > /tmp/slow.txt
@@ -60,7 +61,7 @@ kokoro-tts --voice am_adam --speed 0.8 /tmp/slow.txt /zeroclaw-data/.zeroclaw/wo
 rm /tmp/slow.txt
 ```
 
-### Long text handling
+### Long Text Handling
 
 For texts >10,000 characters:
 1. Set `ZEROCLAW_KOKORO_TIMEOUT=1200` (already set)
@@ -71,81 +72,103 @@ For texts >10,000 characters:
 kokoro-tts --voice am_adam /path/to/long.txt --split-output /zeroclaw-data/.zeroclaw/workspace/tts-output/chunks/
 ```
 
+---
+
 ## Modal GPU Acceleration
 
-**GPU-accelerated TTS via Modal endpoint is now available!**
+**GPU-accelerated TTS via Modal endpoint is available!**
 
-When `MODAL_TTS_ENDPOINT` is set, use it for faster GPU-accelerated TTS:
-
-```bash
-# Use Modal GPU endpoint (much faster for long texts)
-# MODAL_TTS_ENDPOINT is set from ZEROCLAW_MODAL_TTS_ENDPOINT env var
-
-curl -X POST "$MODAL_TTS_ENDPOINT" \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Hello, this is a GPU-accelerated test.", "voice": "am_adam", "password": "'"$MODAL_TTS_PASSWORD"'"}' \
-  -o /tmp/response.json
-
-# Extract base64 audio and decode
-python3 -c "import json,base64; d=json.load(open('/tmp/response.json')); open('/zeroclaw-data/.zeroclaw/workspace/tts-output/modal_audio.wav','wb').write(base64.b64decode(d['audio_base64']))"
-
-# Send via Telegram
-# Use attachment: /zeroclaw-data/.zeroclaw/workspace/tts-output/modal_audio.wav
-```
+When `MODAL_TTS_ENDPOINT` is set, use it for faster GPU-accelerated TTS.
 
 ### Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `ZEROCLAW_MODAL_TTS_ENDPOINT` | Modal TTS endpoint URL | `https://xxx.modal.run` |
-| `MODAL_TTS_ENDPOINT` | Exported from `ZEROCLAW_MODAL_TTS_ENDPOINT` | - |
-| `ZEROCLAW_MODAL_TTS_PASSWORD` | Password for TTS endpoint | `your-secure-password` |
-| `MODAL_TTS_PASSWORD` | Exported from `ZEROCLAW_MODAL_TTS_PASSWORD` | - |
+| Variable | Description |
+|----------|-------------|
+| `MODAL_TTS_ENDPOINT` | Modal single-voice TTS endpoint URL |
+| `MODAL_TTS_CONVERSE_ENDPOINT` | Modal multi-voice conversation endpoint URL |
+| `MODAL_TTS_PASSWORD` | Password for TTS endpoint |
 
-### Endpoint Request Format
+### Single Voice Request (GPU)
 
-```json
-{
-  "text": "Your text here",
-  "voice": "am_adam",
-  "speed": 1.0,
-  "lang": "en-us",
-  "password": "YOUR_TTS_PASSWORD"
-}
+```bash
+curl -s -X POST "$MODAL_TTS_ENDPOINT" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Hello, this is a GPU-accelerated test.", "voice": "am_adam", "speed": 1.0, "password": "'"$MODAL_TTS_PASSWORD"'"}' \
+  -o /tmp/response.json
+
+python3 -c "import json,base64; d=json.load(open('/tmp/response.json')); open('/zeroclaw-data/.zeroclaw/workspace/tts-output/modal_audio.wav','wb').write(base64.b64decode(d['audio_base64']))"
 ```
 
-### Endpoint Response Format
+### Multi-Voice Conversation (News Anchor / Debate Style)
+
+Use the converse endpoint for generating dialogue between multiple speakers:
+
+```bash
+curl -s -X POST "$MODAL_TTS_CONVERSE_ENDPOINT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "dialogue": [
+      {"voice": "bm_george", "text": "Good morning! Welcome to your daily news briefing."},
+      {"voice": "af_sarah", "text": "Thanks! Let me walk you through today top stories."},
+      {"voice": "bm_george", "text": "In technology news today..."},
+      {"voice": "af_sarah", "text": "And in science, researchers have discovered..."}
+    ],
+    "pause_ms": 500,
+    "password": "'"$MODAL_TTS_PASSWORD"'"
+  }' \
+  -o /tmp/conv.json
+
+python3 -c "import json,base64; d=json.load(open('/tmp/conv.json')); open('/zeroclaw-data/.zeroclaw/workspace/tts-output/conversation.wav','wb').write(base64.b64decode(d['audio_base64']))"
+```
+
+### Response Format
 
 ```json
 {
   "audio_base64": "...",
   "sample_rate": 24000,
-  "format": "wav"
+  "format": "wav",
+  "segments_processed": 4
 }
 ```
 
-### Helper Script for Modal TTS
+### Voice Pair Recommendations
+
+For natural-sounding conversations:
+
+| Style | Anchor (Host) | Commentator (Guest) |
+|-------|---------------|---------------------|
+| News Broadcast | `bm_george` (British male) | `af_sarah` (American female) |
+| Casual Chat | `am_adam` (American male) | `bf_emma` (British female) |
+| Tech Podcast | `am_eric` (American male) | `af_nicole` (American female) |
+| Academic | `bm_lewis` (British male) | `bf_alice` (British female) |
+
+### Multi-Voice Helper Script
 
 ```bash
-modal-tts() {
-    local text="$1"
+converse_tts() {
+    local dialogue_json="$1"
     local output="$2"
-    local voice="${3:-am_adam}"
-    local speed="${4:-1.0}"
-    local tmp="/tmp/modal-response-$$.json"
+    local pause_ms="${3:-500}"
+    local tmp="/tmp/converse_tts_$$.json"
     
-    curl -s -X POST "$MODAL_TTS_ENDPOINT" \
+    curl -s -X POST "${MODAL_TTS_CONVERSE_ENDPOINT}" \
       -H "Content-Type: application/json" \
-      -d "{\"text\": \"$text\", \"voice\": \"$voice\", \"speed\": $speed, \"password\": \"$MODAL_TTS_PASSWORD\"}" \
+      -d "{\"dialogue\": $dialogue_json, \"pause_ms\": $pause_ms, \"password\": \"$MODAL_TTS_PASSWORD\"}" \
       -o "$tmp"
     
     python3 -c "import json,base64; d=json.load(open('$tmp')); open('$output','wb').write(base64.b64decode(d['audio_base64']))"
     rm -f "$tmp"
+    
+    echo "Conversation audio saved to: $output"
 }
 
 # Usage:
-# modal-tts "Hello from GPU" /zeroclaw-data/.zeroclaw/workspace/tts-output/gpu_audio.wav am_adam 1.0
+# dialogue='[{"voice": "bm_george", "text": "Hello!"}, {"voice": "af_sarah", "text": "Hi there!"}]'
+# converse_tts "$dialogue" /zeroclaw-data/.zeroclaw/workspace/tts-output/convo.wav 500
 ```
+
+---
 
 ## Sending Audio via Telegram
 
@@ -158,9 +181,10 @@ Use the send_attachment tool with the absolute path to the generated audio file:
 
 **IMPORTANT**: Always use absolute paths when sending attachments. Relative paths will not work.
 
-## Example Workflow: Generate and Send Audio Message
+## Example Workflows
 
-1. Generate the audio file:
+### Single Voice Audio Message
+
 ```bash
 # Create temp file with text
 echo "Once upon a time, in a magical forest..." > /tmp/story.txt
@@ -168,39 +192,34 @@ echo "Once upon a time, in a magical forest..." > /tmp/story.txt
 kokoro-tts --voice am_adam --speed 0.9 /tmp/story.txt /zeroclaw-data/.zeroclaw/workspace/tts-output/story.wav
 # Clean up
 rm /tmp/story.txt
+# Send to user
+# Use: /zeroclaw-data/.zeroclaw/workspace/tts-output/story.wav
 ```
 
-2. Verify the file exists:
-```bash
-ls -la /zeroclaw-data/.zeroclaw/workspace/tts-output/story.wav
-```
-
-3. Send to user via Telegram:
-```
-Send attachment: /zeroclaw-data/.zeroclaw/workspace/tts-output/story.wav
-```
-
-## Helper Function for Easy TTS
-
-You can create a helper script to simplify TTS generation:
+### Multi-Voice Conversation (News Briefing)
 
 ```bash
-# Add to ~/.bashrc or create as /usr/local/bin/tts-quick
-tts-quick() {
-    local text="$1"
-    local output="$2"
-    local voice="${3:-am_adam}"
-    local speed="${4:-1.0}"
-    local tmp_file="/tmp/tts-input-$$.txt"
-    
-    echo "$text" > "$tmp_file"
-    kokoro-tts --voice "$voice" --speed "$speed" "$tmp_file" "$output"
-    rm "$tmp_file"
-}
+# Build dialogue for news briefing
+dialogue='[
+  {"voice": "bm_george", "text": "Welcome to the morning news briefing for today."},
+  {"voice": "af_sarah", "text": "We have some exciting stories to share with you."},
+  {"voice": "bm_george", "text": "First up, technology news."},
+  {"voice": "af_sarah", "text": "Researchers have made a breakthrough in AI."}
+]'
 
-# Usage:
-# tts-quick "Hello world" /zeroclaw-data/.zeroclaw/workspace/tts-output/hello.wav am_adam 1.0
+# Generate conversation audio
+curl -s -X POST "$MODAL_TTS_CONVERSE_ENDPOINT" \
+  -H "Content-Type: application/json" \
+  -d "{\"dialogue\": $dialogue, \"pause_ms\": 500, \"password\": \"$MODAL_TTS_PASSWORD\"}" \
+  -o /tmp/conv.json
+
+python3 -c "import json,base64; d=json.load(open('/tmp/conv.json')); open('/zeroclaw-data/.zeroclaw/workspace/tts-output/briefing.wav','wb').write(base64.b64decode(d['audio_base64']))"
+
+# Send to user
+# Use: /zeroclaw-data/.zeroclaw/workspace/tts-output/briefing.wav
 ```
+
+---
 
 ## Troubleshooting
 
@@ -241,3 +260,11 @@ If generation times out:
 1. Check `ZEROCLAW_KOKORO_TIMEOUT` is set high enough (default: 1200s)
 2. Split text into smaller chunks
 3. Use `--split-output` option for automatic chunking
+
+### Modal endpoint errors
+
+If the Modal GPU endpoint returns errors:
+1. Check `MODAL_TTS_ENDPOINT` and `MODAL_TTS_CONVERSE_ENDPOINT` are set
+2. Verify `MODAL_TTS_PASSWORD` is correct
+3. First request may take 10-30s for GPU cold start
+4. Check the response JSON for `error` field
