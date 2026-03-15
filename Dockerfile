@@ -73,7 +73,9 @@ COPY skills/ /zeroclaw-skills/
 RUN chmod +x /usr/local/bin/zeroclaw-scripts/*.py && \
     ln -s /usr/local/bin/zeroclaw-scripts/todoist-cli.py /usr/local/bin/todoist-cli && \
     ln -s /usr/local/bin/zeroclaw-scripts/google-oauth-helper.py /usr/local/bin/google-oauth-helper && \
-    ln -s /usr/local/bin/zeroclaw-scripts/obsidian-helper.py /usr/local/bin/obsidian-helper
+    ln -s /usr/local/bin/zeroclaw-scripts/obsidian-helper.py /usr/local/bin/obsidian-helper && \
+    ln -s /usr/local/bin/zeroclaw-scripts/memcode-cli.py /usr/local/bin/memcode-cli && \
+    ln -s /usr/local/bin/zeroclaw-scripts/memcode-cli.py /usr/local/bin/flashcard
 
 WORKDIR /zeroclaw-data
 EXPOSE 42617

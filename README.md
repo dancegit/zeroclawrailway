@@ -50,8 +50,8 @@ Only configured **channels** can interact with the agent.
 Use `custom:https://your-api.com/v1` format for OpenAI-compatible APIs:
 
 ```
-ZEROCLAW_PROVIDER=custom:https://opencode.ai/zen/go/v1
-ZEROCLAW_MODEL=glm-5
+ZEROCLAW_PROVIDER=custom:https://api.your-provider.com/v1
+ZEROCLAW_MODEL=your-model
 ZEROCLAW_API_KEY=your-api-key
 ```
 
@@ -307,7 +307,7 @@ Deploy a GPU-accelerated TTS endpoint on Modal for faster audio generation.
 
 **Setup:**
 1. Create account at [modal.com](https://modal.com)
-2. Deploy the TTS service: [github.com/dancegit/modal-kokoro-tts](https://github.com/dancegit/modal-kokoro-tts)
+2. Deploy the TTS service: [modal-kokoro-tts](https://github.com/your-org/modal-kokoro-tts)
 3. Copy the endpoint URL after deployment
 4. Set `ZEROCLAW_MODAL_TTS_ENDPOINT` in Railway
 
@@ -1074,6 +1074,88 @@ For complete documentation of all ZeroClaw features, see the official docs:
 - **Environment Variables**: [docs/config-reference.md#environment-variables](https://github.com/zeroclaw-labs/zeroclaw/blob/main/docs/config-reference.md#environment-variables)
 - **Autonomy Settings**: [docs/config-reference.md#autonomy](https://github.com/zeroclaw-labs/zeroclaw/blob/main/docs/config-reference.md#autonomy)
 - **Channel Setup**: [docs/channels-reference.md](https://github.com/zeroclaw-labs/zeroclaw/blob/main/docs/channels-reference.md)
+
+---
+
+## Required API Keys & Placeholders Checklist
+
+This section lists all environment variables that require user-specific values. Variables with placeholder values (`YOUR_*_HERE`) must be replaced before use.
+
+### Core API Keys (Required)
+
+| Variable | Placeholder | Where to Get |
+|----------|-------------|--------------|
+| `ZEROCLAW_API_KEY` | - | Your LLM provider API key |
+| `OPENAI_API_KEY` | - | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+| `ANTHROPIC_API_KEY` | - | [console.anthropic.com](https://console.anthropic.com/) |
+| `OPENROUTER_API_KEY` | - | [openrouter.ai/keys](https://openrouter.ai/keys) |
+| `ZAI_API_KEY` | - | Z.AI platform |
+
+### Channel Configuration
+
+| Variable | Placeholder | Where to Get |
+|----------|-------------|--------------|
+| `TELEGRAM_BOT_TOKEN` | - | [@BotFather](https://t.me/botfather) on Telegram |
+| `DISCORD_BOT_TOKEN` | - | [Discord Developer Portal](https://discord.com/developers/applications) |
+| `SLACK_BOT_TOKEN` | - | Slack App OAuth & Permissions |
+
+### Integration API Keys
+
+| Variable | Placeholder | Where to Get |
+|----------|-------------|--------------|
+| `TODOIST_API_TOKEN` | - | [Todoist Settings → Integrations](https://todoist.com/app/settings/integrations) |
+| `GITHUB_TOKEN` | - | [GitHub Settings → Developer settings → PAT](https://github.com/settings/tokens) |
+
+### Google Integration (Placeholders)
+
+These variables have placeholder values that **must be replaced**:
+
+| Variable | Current Placeholder | Setup Steps |
+|----------|---------------------|-------------|
+| `GMAIL_CLIENT_ID` | `YOUR_GMAIL_CLIENT_ID_HERE` | Create OAuth2 credentials in [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `GMAIL_CLIENT_SECRET` | `YOUR_GMAIL_CLIENT_SECRET_HERE` | From the same OAuth2 credentials |
+| `GMAIL_REFRESH_TOKEN` | `YOUR_GMAIL_REFRESH_TOKEN_HERE` | Generate using `scripts/google-oauth-helper.py` |
+
+**Quick Setup for Google:**
+```bash
+# 1. Create OAuth2 credentials (Desktop app type)
+# 2. Enable Gmail API and Calendar API
+# 3. Generate refresh token:
+python3 scripts/google-oauth-helper.py \
+  --client-id "YOUR_CLIENT_ID" \
+  --client-secret "YOUR_CLIENT_SECRET" \
+  --scopes all
+
+# 4. Set in Railway:
+railway variable set GMAIL_CLIENT_ID=xxx
+railway variable set GMAIL_CLIENT_SECRET=xxx
+railway variable set GMAIL_REFRESH_TOKEN=xxx
+```
+
+### GPU Acceleration (Optional)
+
+| Variable | Placeholder | Where to Get |
+|----------|-------------|--------------|
+| `ZEROCLAW_MODAL_TOKEN_ID` | - | [modal.com](https://modal.com) → Settings → Tokens |
+| `ZEROCLAW_MODAL_TOKEN_SECRET` | - | Created with token ID |
+| `ZEROCLAW_MODAL_TTS_ENDPOINT` | - | Deploy modal-kokoro-tts service first |
+
+### Nix Home-Manager Skills
+
+| Variable | Example | Description |
+|----------|---------|-------------|
+| `ZEROCLAW_ENABLED_NIX_SKILLS` | `ddg-search,weather,pdf` | Comma-separated list of skills to enable |
+| `NIX_HOME_MANAGER_GITHUB_REPO` | `your-org/zeroclawrailway-nix-home-manager` | GitHub repo with home.nix config |
+
+### Finding Placeholders in Your Environment
+
+```bash
+# Check for placeholder values in Railway
+railway variable list --service YOUR_SERVICE -k | grep "YOUR_"
+
+# Or use JSON output
+railway variable list --service YOUR_SERVICE --json | jq 'to_entries[] | select(.value | contains("YOUR_"))'
+```
 
 ---
 

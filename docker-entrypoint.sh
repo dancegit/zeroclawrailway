@@ -73,7 +73,17 @@ setup_kokoro_tts() {
     
     if [ -n "$ZEROCLAW_MODAL_TTS_ENDPOINT" ]; then
         export MODAL_TTS_ENDPOINT="$ZEROCLAW_MODAL_TTS_ENDPOINT"
-        echo "  Modal TTS endpoint: $MODAL_TTS_ENDPOINT"
+        echo "  Modal TTS endpoint: configured"
+    fi
+    
+    if [ -n "$ZEROCLAW_MODAL_TTS_CONVERSE_ENDPOINT" ]; then
+        export MODAL_TTS_CONVERSE_ENDPOINT="$ZEROCLAW_MODAL_TTS_CONVERSE_ENDPOINT"
+        echo "  Modal TTS converse endpoint: configured"
+    fi
+    
+    if [ -n "$ZEROCLAW_MODAL_TTS_PASSWORD" ]; then
+        export MODAL_TTS_PASSWORD="$ZEROCLAW_MODAL_TTS_PASSWORD"
+        echo "  Modal TTS password: configured"
     fi
     
     echo "  Kokoro TTS configured"
@@ -1263,6 +1273,8 @@ allowed_commands = [
     "obsidian-helper",
     "kokoro-tts",
     "modal",
+    "flashcard",
+    "memcode-cli",
     "run", "zeroclaw", "railway"
 ]
 
@@ -1278,6 +1290,8 @@ shell_env_passthrough = [
     "MODAL_TOKEN_ID",
     "MODAL_TOKEN_SECRET",
     "MODAL_TTS_ENDPOINT",
+    "MODAL_TTS_CONVERSE_ENDPOINT",
+    "MODAL_TTS_PASSWORD",
     "KOKORO_MODEL_PATH",
     "TODOIST_API_TOKEN",
     "GMAIL_CLIENT_ID",
