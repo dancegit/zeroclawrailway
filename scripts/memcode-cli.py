@@ -104,11 +104,12 @@ def resolve_course_id(config: dict, course_id: Optional[str]) -> int:
         return int(course_id)
     if config["default_course_id"]:
         return int(config["default_course_id"])
-    courses = api_request(config, "POST", "/api/CourseApi.getMyCourses", {})
+    courses = api_request(config, "POST", "/api/CourseApi.getAllCreatedCourses", {})
     if courses and len(courses) > 0:
-        return courses[0]["id"]
+        course = courses[0].get("course", courses[0])
+        return course["id"]
     print(
-        "Error: No courses found. Create a course first with 'memcode-cli course create'"
+        "Error: No courses found. Create a course first with 'flashcard course create'"
     )
     sys.exit(1)
 
@@ -135,9 +136,10 @@ def cmd_login(args):
 def cmd_list(args):
     config = get_config()
     course_id = resolve_course_id(config, args.course_id)
-    problems = api_request(
-        config, "POST", "/api/ProblemApi.getAll", {"courseId": course_id}
+    data = api_request(
+        config, "POST", "/api/PageApi.getCoursePage", {"courseId": course_id}
     )
+    problems = data.get("problems", [])
 
     if args.json:
         print(json.dumps(problems, indent=2))
@@ -163,7 +165,22 @@ def cmd_list(args):
 
 def cmd_get(args):
     config = get_config()
-    problem = api_request(config, "POST", "/api/ProblemApi.get", {"problemId": args.id})
+    courses = api_request(config, "POST", "/api/CourseApi.getAllCreatedCourses", {})
+    problem = None
+    for course in courses:
+        data = api_request(
+            config, "POST", "/api/PageApi.getCoursePage", {"courseId": course["id"]}
+        )
+        for p in data.get("problems", []):
+            if p["id"] == args.id:
+                problem = p
+                break
+        if problem:
+            break
+
+    if not problem:
+        print(f"Error: Problem {args.id} not found")
+        sys.exit(1)
 
     if args.json:
         print(json.dumps(problem, indent=2))
@@ -205,14 +222,19 @@ def cmd_create(args):
 
 def cmd_delete(args):
     config = get_config()
+    api_request(
+        config,
+        "POST",
+        "/api/ProblemApi.deleteMany",
+        {"ids": [int(pid) for pid in args.ids]},
+    )
     for pid in args.ids:
-        api_request(config, "POST", "/api/ProblemApi.delete", {"problemId": int(pid)})
         print(f"Deleted flashcard {pid}")
 
 
 def cmd_courses(args):
     config = get_config()
-    courses = api_request(config, "POST", "/api/CourseApi.getMyCourses", {})
+    courses = api_request(config, "POST", "/api/CourseApi.getAllCreatedCourses", {})
 
     if args.json:
         print(json.dumps(courses, indent=2))
@@ -224,10 +246,11 @@ def cmd_courses(args):
 
     print("Your courses:\n")
     for c in courses:
-        visibility = "public" if c.get("ifPublic") else "private"
-        print(f"  [{c['id']}] {c['title']} ({visibility})")
-        if c.get("description"):
-            print(f"       {c['description'][:60]}")
+        course = c.get("course", c)
+        visibility = "public" if course.get("if_public") else "private"
+        print(f"  [{course['id']}] {course['title']} ({visibility})")
+        if course.get("description"):
+            print(f"       {course['description'][:60]}")
 
 
 def cmd_course_create(args):
@@ -255,9 +278,10 @@ def cmd_course_create(args):
 def cmd_review(args):
     config = get_config()
     course_id = resolve_course_id(config, args.course_id)
-    problems = api_request(
-        config, "POST", "/api/ProblemApi.getAll", {"courseId": course_id}
+    data = api_request(
+        config, "POST", "/api/PageApi.getCoursePage", {"courseId": course_id}
     )
+    problems = data.get("problems", [])
 
     if not problems:
         print("No flashcards to review.")
