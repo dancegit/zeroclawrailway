@@ -2,11 +2,22 @@
 
 Spaced repetition flashcard management via Memcode API.
 
-## Prerequisites
+## IMPORTANT: Environment Already Configured
 
-- `MEMCODE_API_URL` - Memcode API endpoint (e.g., `https://memcode.example.com`)
-- `MEMCODE_API_KEY` - API key for authentication
-- `MEMCODE_DEFAULT_COURSE_ID` - (Optional) Default course ID for new cards
+The following environment variables are **ALREADY SET** in the system. Do NOT ask the user for them:
+
+- `MEMCODE_API_URL` - Already configured (Memcode production instance)
+- `MEMCODE_API_KEY` - Already configured
+- `MEMCODE_DEFAULT_USER` - Already configured
+- `MEMCODE_DEFAULT_EMAIL` - Already configured
+- `MEMCODE_DEFAULT_PASSWORD` - Already configured
+
+**To verify connectivity, simply run:**
+```bash
+flashcard health
+```
+
+If that returns success, everything is configured and working. Proceed with flashcard operations.
 
 ## Commands
 
@@ -37,8 +48,8 @@ flashcard list --limit 20
 
 **Q&A Card (separateAnswer):**
 ```bash
-flashcard create "What is 2+2?" "4"
-flashcard create "Capital of France?" "Paris" --course 3
+flashcard create "What is 2+2?" --answer "4"
+flashcard create "Capital of France?" --answer "Paris" --course 3
 ```
 
 **Cloze Deletion Card (inlinedAnswers):**
